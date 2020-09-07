@@ -1,15 +1,20 @@
 import React from 'react';
-import { Card, Container, InputGroup, FormControl } from 'react-bootstrap';
+import { Card, InputGroup, FormControl } from 'react-bootstrap';
 import './ChatPage.css';
-import userLogo from '../images/mock-user-image.png';
-import { FaSearch } from 'react-icons/fa';
-// import { Link } from 'react-router-dom';
+import userLogo from '../../images/mock-user-image.png';
+import { FaSearch, FaEdit, FaTrashAlt } from 'react-icons/fa';
 
-const chat = () => {
+const Contacts = () => {
   return (
-    <Container className='mt-5'>
+    <div>
       <div className='contacts-container'>
-        <p className='text-left'>Chat</p>
+        <div className='d-flex flex-row my-2'>
+          <h3 className='text-left mt-1'>Chat</h3>
+          <div className='ml-auto mr-2 mt-2'>
+            <FaEdit className='mr-2' />
+            <FaTrashAlt />
+          </div>
+        </div>
 
         <InputGroup className='mb-3 input-wrapper'>
           <FormControl
@@ -24,24 +29,24 @@ const chat = () => {
         </InputGroup>
 
         <Card>
-          {/* <Link to='/batch/list'> */}
-          <div onClick={() => alert('Hello from here')} className='mx-auto'>
+          <div
+            onClick={() => alert('Hello from here')}
+            className='mx-auto my-1'
+          >
             <Card className='d-flex flex-row card-hoverable' hoverable>
               <Card.Img variant='left' src={userLogo} className='user-logo ' />
-              <Card body>some text within a card body.</Card>
+              <Card body className='border-light'>
+                Name
+              </Card>
             </Card>
           </div>
-          {/* </Link> */}
+
           <Card body>This is some text within a card body.</Card>
           <Card body>This is some text within a card body.</Card>
         </Card>
       </div>
-    </Container>
+    </div>
   );
 };
 
-export default chat;
-
-//link
-//
-//https://stackoverflow.com/questions/19285640/font-awesome-icon-inside-text-input-element
+export default Contacts;
