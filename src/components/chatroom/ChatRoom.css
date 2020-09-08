@@ -1,0 +1,27 @@
+.header {
+  height: 50px;
+  background-color: lightgreen;
+}
+
+.chat-container {
+  width: 800px;
+  height: 500px;
+  background-color: lightgray;
+}
+
+.main-users {
+  width: 300px;
+  height: 400px;
+  background-color: lightpink;
+}
+
+.main-chat {
+  width: 500px;
+  height: 400px;
+  background-color: lightsalmon;
+}
+
+.input-msg {
+  height: 50px;
+  background-color: lightblue;
+}

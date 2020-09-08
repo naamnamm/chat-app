@@ -7,7 +7,11 @@
   margin: 40px auto 0;
 }
 
-.card-header .title-color {
-  background-color: white;
+.text-color {
   color: #26a69a;
+}
+
+.button-color {
+  background-color: #26a69a;
+  width: 100px;
 }

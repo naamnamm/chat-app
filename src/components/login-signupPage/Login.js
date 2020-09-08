@@ -1,19 +1,16 @@
 import React from 'react';
 import { FaComments } from 'react-icons/fa';
 import './Login.css';
-import { Button, Card, Form } from 'react-bootstrap';
+import { Button, Card, Form, Container } from 'react-bootstrap';
 
 const login = () => {
   return (
     <div className='card-container'>
-      <Card className='border-light'>
-        <Card.Header className='font-weight-bold text-muted border-light title-color'>
-          Log in to Chat Room
-        </Card.Header>
-
+      <Container>
         <Card.Body>
+          <h3 className='mt-1 mb-4 text-color'> Log in to Chat Room</h3>
           <Card.Title className='mt-1 mb-4'>
-            <FaComments color='skyblue' className='logo-size' />
+            <FaComments className='logo-size' />
           </Card.Title>
 
           <Form.Control
@@ -35,13 +32,13 @@ const login = () => {
             />
           </Form> */}
 
-          <Button className='my-3'>Log in</Button>
+          <Button className='my-3 button-color border-light'>Log in</Button>
 
           <div>
             <a href='/'> Forgot password?</a>
           </div>
         </Card.Body>
-      </Card>
+      </Container>
     </div>
   );
 };
