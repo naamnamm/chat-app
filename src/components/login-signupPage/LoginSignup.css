@@ -1,0 +1,18 @@
+.jumbotron-container {
+  width: 800px;
+  background-color: white;
+  border: 1px solid lightgray;
+}
+
+.login-container {
+  background-color: white;
+}
+
+.signup-container {
+  background-color: #26a69a;
+  color: white;
+}
+
+.container {
+  height: 450px;
+}

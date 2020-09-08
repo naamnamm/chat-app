@@ -1,0 +1,13 @@
+.logo-size {
+  font-size: 50px;
+}
+
+.card-container {
+  width: 400px;
+  margin: 40px auto 0;
+}
+
+.card-header .title-color {
+  background-color: white;
+  color: #26a69a;
+}

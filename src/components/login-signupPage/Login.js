@@ -6,9 +6,9 @@ import { Button, Card, Form } from 'react-bootstrap';
 const login = () => {
   return (
     <div className='card-container'>
-      <Card>
-        <Card.Header className='font-weight-bold text-muted'>
-          Log in to Chat Application
+      <Card className='border-light'>
+        <Card.Header className='font-weight-bold text-muted border-light title-color'>
+          Log in to Chat Room
         </Card.Header>
 
         <Card.Body>
@@ -38,8 +38,7 @@ const login = () => {
           <Button className='my-3'>Log in</Button>
 
           <div>
-            <a href='/'> Forgot password?</a> ·
-            <a href='/'> Sign up for new account</a>
+            <a href='/'> Forgot password?</a>
           </div>
         </Card.Body>
       </Card>
