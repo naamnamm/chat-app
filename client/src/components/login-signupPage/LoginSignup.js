@@ -4,11 +4,11 @@ import './LoginSignup.css';
 import Login from './Login';
 import Signup from './Signup';
 
-const LoginSignup = () => {
+const LoginSignup = ({ handleClick }) => {
   return (
     <div className='jumbotron-container mx-auto mt-5 d-flex'>
       <Container className='login-container mx-5'>
-        <Login />
+        <Login handleclick={handleClick} />
       </Container>
       <Container className='signup-container'>
         <Signup />

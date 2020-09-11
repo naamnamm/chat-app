@@ -5,9 +5,18 @@ import ChatRoom from './components/chatroom/ChatRoom';
 import LoginSignup from './components/login-signupPage/LoginSignup';
 
 const App = () => {
-  const [isLoggedin, setIsLoggedIn] = useState(true);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
-  const displayPage = isLoggedin ? <ChatRoom /> : <LoginSignup />;
+  const handleClick = (e) => {
+    console.log(e.target);
+  };
+
+  const displayPage =
+    isLoggedIn === true ? (
+      <ChatRoom />
+    ) : (
+      <LoginSignup handleClick={handleClick} />
+    );
 
   return <div className='App'>{displayPage}</div>;
 };

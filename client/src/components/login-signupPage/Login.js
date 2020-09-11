@@ -3,7 +3,7 @@ import { FaComments } from 'react-icons/fa';
 import './Login.css';
 import { Button, Card, Form, Container } from 'react-bootstrap';
 
-const login = () => {
+const Login = ({ handleClick }) => {
   return (
     <div className='card-container'>
       <Container>
@@ -24,15 +24,12 @@ const login = () => {
             className='w-75 mx-auto my-3'
           />
 
-          {/* <Form inline className='w-75 mx-auto my-3'>
-            <Form.Check
-              type='checkbox'
-              label='Ready to search for tweets?'
-              className='text-muted'
-            />
-          </Form> */}
-
-          <Button className='my-3 button-color border-light'>Log in</Button>
+          <Button
+            onClick={(e) => handleClick(e)}
+            className='my-3 button-color border-light'
+          >
+            Log in
+          </Button>
 
           <div>
             <a href='/'> Forgot password?</a>
@@ -43,4 +40,4 @@ const login = () => {
   );
 };
 
-export default login;
+export default Login;

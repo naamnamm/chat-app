@@ -1,27 +1,32 @@
 .header {
-  height: 50px;
+  height: 60px;
   background-color: lightgreen;
 }
 
 .chat-container {
   width: 800px;
-  height: 500px;
+  height: 520px;
   background-color: lightgray;
 }
 
-.main-users {
+.chat-sidebar {
   width: 300px;
   height: 400px;
   background-color: lightpink;
 }
 
-.main-chat {
+.chat-main {
   width: 500px;
   height: 400px;
   background-color: lightsalmon;
 }
 
 .input-msg {
-  height: 50px;
+  height: 60px;
   background-color: lightblue;
+}
+
+ul {
+  list-style-type: none;
+  text-align: left;
 }
