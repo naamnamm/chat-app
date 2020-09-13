@@ -8,7 +8,7 @@ const LoginSignup = ({ handleClick }) => {
   return (
     <div className='jumbotron-container mx-auto mt-5 d-flex'>
       <Container className='login-container mx-5'>
-        <Login handleclick={handleClick} />
+        <Login handleClick={handleClick} />
       </Container>
       <Container className='signup-container'>
         <Signup />
