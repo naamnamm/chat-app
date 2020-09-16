@@ -8,7 +8,7 @@ const socket = io('http://localhost:5000/');
 
 const App = () => {
   //const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [username, setUsername] = useState();
+  const [username, setUsername] = useState([]);
 
   // const handleClick = () => {
   //   setIsLoggedIn(true);

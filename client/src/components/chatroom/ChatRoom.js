@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   Button,
   Toast,
@@ -11,6 +11,7 @@ import {
 import './ChatRoom.css';
 import { FaSmile, FaUsers } from 'react-icons/fa';
 import io from 'socket.io-client';
+import ScrollableFeed from 'react-scrollable-feed';
 
 const socket = io('http://localhost:5000/');
 
@@ -19,15 +20,21 @@ const Chatroom = ({ username }) => {
   const [msgInput, setMsgInput] = useState('');
   const [user, setUser] = useState([]);
 
+  //scroll effect
+  // const messagesEndRef = useRef(null);
+
+  // useEffect(() => {
+  //   messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
+  // }, [messages]);
+
   const handleChange = (e) => {
     setMsgInput(e.target.value);
   };
 
   const handleClick = (msgInput) => {
-    //emit msg to server
+    //emit new msg to server
     socket.emit('chatMsg', msgInput);
 
-    //
     //then set MsgInput to ''
     setMsgInput('');
   };
@@ -75,10 +82,10 @@ const Chatroom = ({ username }) => {
         </div>
 
         <div className='chat-main'>
-          <div className='text-center font-weight-bold'>Today</div>
+          {/* <div className='text-center font-weight-bold'>Today</div>
 
-          <div className='text-muted'>Naam has joined</div>
-          {displayMsgs}
+          <div className='text-muted'>Naam has joined</div> */}
+          <ScrollableFeed>{displayMsgs}</ScrollableFeed>
         </div>
       </div>
 
