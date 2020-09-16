@@ -19,13 +19,20 @@ io.on('connection', (socket) => {
   //emit to all user accept use that is connecting
   socket.broadcast.emit('msg', 'User has join the chat');
 
-  //Runs when client disconnect
+  //broadcast to everybody
+  //io.emit()
+
+  //Catch event from the client
+  //1. Runs when client disconnect
   socket.on('disconnect', () => {
     io.emit('msg', 'A user has left the chat');
   });
 
-  //broadcast to everybody
-  //io.emit()
+  //2. catch msg from the client
+  socket.on('chatMsg', (msg) => {
+    console.log(msg);
+    io.emit('msg', msg);
+  });
 });
 
 server.listen(port, () => console.log(`server started on port ${port}`));

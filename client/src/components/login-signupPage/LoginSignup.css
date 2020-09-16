@@ -16,3 +16,16 @@
 .container {
   height: 450px;
 }
+
+.logo-size {
+  font-size: 50px;
+}
+
+.text-color {
+  color: #26a69a;
+}
+
+.button-color {
+  background-color: #26a69a;
+  width: 100px;
+}
