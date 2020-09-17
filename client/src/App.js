@@ -7,18 +7,18 @@ import io from 'socket.io-client';
 const socket = io('http://localhost:5000/');
 
 const App = () => {
-  //const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [username, setUsername] = useState([]);
 
-  // const handleClick = () => {
-  //   setIsLoggedIn(true);
-  // };
-
-  const displayPage = username ? (
-    <ChatRoom username={username} />
-  ) : (
-    <LoginSignup onUsernameSubmit={setUsername} />
-  );
+  const displayPage =
+    isLoggedIn === true ? (
+      <ChatRoom username={username} />
+    ) : (
+      <LoginSignup
+        onUsernameSubmit={setUsername}
+        handleLoggedin={setIsLoggedIn}
+      />
+    );
 
   return (
     <div className='App'>

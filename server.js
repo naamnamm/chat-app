@@ -1,4 +1,5 @@
 const path = require('path');
+const formatMessage = require('./utils/message');
 
 const express = require('express');
 const app = express();
@@ -12,12 +13,17 @@ const port = process.env.PORT || 5000;
 app.use(express.static(path.join(__dirname, 'client/build')));
 
 io.on('connection', (socket) => {
-  //emit to single user that is connecting
-  socket.emit('msg', 'Welcome to chatroom');
+  socket.on('joinChatroom', ({ username }) => {
+    //emit to single user that is connecting
+    socket.emit('msg', formatMessage(username, 'Welcome to chatroom'));
 
-  //broadcast when new user connects >
-  //emit to all user accept use that is connecting
-  socket.broadcast.emit('msg', 'User has join the chat');
+    //broadcast when new user connects >
+    //emit to all user accept use that is connecting
+    socket.broadcast.emit(
+      'msg',
+      formatMessage(username, 'User has join the chat')
+    );
+  });
 
   //broadcast to everybody
   //io.emit()

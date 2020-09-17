@@ -40,14 +40,17 @@ const Chatroom = ({ username }) => {
   };
 
   useEffect(() => {
+    socket.emit('joinChatroom', { username });
+
     socket.on('msg', (msg) => {
-      setMessages((messages) => [...messages, msg]);
+      console.log(msg);
+      // setMessages((messages) => [...messages, msg]);
     });
 
     console.log(messages);
   }, []);
 
-  const displayMsgs = messages.map((msg, index) => (
+  const displayMsgs = messages.map((msg, index, username) => (
     <div key={index} className='message'>
       <Toast className='mr-auto mb-0'>
         {' '}

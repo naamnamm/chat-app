@@ -3,11 +3,13 @@ import { Container, Card, Form, Button } from 'react-bootstrap';
 import './LoginSignup.css';
 import { FaComments } from 'react-icons/fa';
 
-const LoginSignup = ({ onUsernameSubmit }) => {
+const LoginSignup = ({ onUsernameSubmit, handleLoggedin }) => {
   const usernameRef = useRef();
 
   const handleClick = () => {
     onUsernameSubmit(usernameRef.current.value);
+
+    handleLoggedin(true);
   };
 
   return (
