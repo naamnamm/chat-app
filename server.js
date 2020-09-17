@@ -1,5 +1,6 @@
 const path = require('path');
 const formatMessage = require('./utils/message');
+const { userJoin, getCurrentUser } = require('./utils/users');
 
 const express = require('express');
 const app = express();
@@ -15,13 +16,15 @@ app.use(express.static(path.join(__dirname, 'client/build')));
 io.on('connection', (socket) => {
   socket.on('joinChatroom', ({ username }) => {
     //emit to single user that is connecting
-    socket.emit('msg', formatMessage(username, 'Welcome to chatroom'));
+    const user = userJoin(socket.id, username);
+
+    socket.emit('msg', formatMessage(user.username, 'Welcome to chatroom'));
 
     //broadcast when new user connects >
     //emit to all user accept use that is connecting
     socket.broadcast.emit(
       'msg',
-      formatMessage(username, 'User has join the chat')
+      formatMessage(user.username, `${user.username} has join the chat`)
     );
   });
 
@@ -36,8 +39,9 @@ io.on('connection', (socket) => {
 
   //2. catch msg from the client
   socket.on('chatMsg', (msg) => {
-    console.log(msg);
-    io.emit('msg', msg);
+    const user = getCurrentUser(socket.id);
+
+    io.emit('msg', formatMessage(user.username, msg));
   });
 });
 

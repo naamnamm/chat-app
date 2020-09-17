@@ -44,18 +44,21 @@ const Chatroom = ({ username }) => {
 
     socket.on('msg', (msg) => {
       console.log(msg);
-      // setMessages((messages) => [...messages, msg]);
+      setMessages((messages) => [...messages, msg]);
     });
 
     console.log(messages);
   }, []);
 
-  const displayMsgs = messages.map((msg, index, username) => (
+  const displayMsgs = messages.map((msg, index) => (
     <div key={index} className='message'>
-      <Toast className='mr-auto mb-0'>
+      <Toast className='ml-auto mb-0'>
         {' '}
-        <Toast.Body>{msg}</Toast.Body>
+        <Toast.Body>{msg.text}</Toast.Body>
       </Toast>
+      <div className='text-right'>
+        {msg.username} {msg.time}
+      </div>
     </div>
   ));
 
