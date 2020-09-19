@@ -14,34 +14,37 @@ const port = process.env.PORT || 5000;
 app.use(express.static(path.join(__dirname, 'client/build')));
 
 io.on('connection', (socket) => {
-  socket.on('joinChatroom', ({ username }) => {
+  socket.on('loggedIn', ({ username }) => {
     //emit to single user that is connecting
     const user = userJoin(socket.id, username);
 
-    socket.emit('msg', formatMessage(user.username, 'Welcome to chatroom'));
+    socket.emit(
+      'message',
+      formatMessage('chatbot', `Welcome to chatroom, ${user.username}`)
+    );
 
-    //broadcast when new user connects >
+    io.emit('currentUsers', user);
+
     //emit to all user accept use that is connecting
     socket.broadcast.emit(
-      'msg',
-      formatMessage(user.username, `${user.username} has join the chat`)
+      'message',
+      formatMessage('chatbot', `${user.username} has join the chat`)
     );
   });
 
   //broadcast to everybody
   //io.emit()
-
   //Catch event from the client
   //1. Runs when client disconnect
   socket.on('disconnect', () => {
-    io.emit('msg', 'A user has left the chat');
+    io.emit('message', 'A user has left the chat');
   });
 
-  //2. catch msg from the client
+  //2. catch message from the client
   socket.on('chatMsg', (msg) => {
     const user = getCurrentUser(socket.id);
 
-    io.emit('msg', formatMessage(user.username, msg));
+    io.emit('message', formatMessage(user.username, msg));
   });
 });
 

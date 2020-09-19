@@ -18,18 +18,7 @@ const socket = io('http://localhost:5000/');
 const Chatroom = ({ username }) => {
   const [messages, setMessages] = useState([]);
   const [msgInput, setMsgInput] = useState('');
-  const [user, setUser] = useState([]);
-
-  //scroll effect
-  // const messagesEndRef = useRef(null);
-
-  // useEffect(() => {
-  //   messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
-  // }, [messages]);
-
-  const handleChange = (e) => {
-    setMsgInput(e.target.value);
-  };
+  const [users, setUsers] = useState([]);
 
   const handleClick = (msgInput) => {
     //emit new msg to server
@@ -40,15 +29,20 @@ const Chatroom = ({ username }) => {
   };
 
   useEffect(() => {
-    socket.emit('joinChatroom', { username });
+    socket.emit('loggedIn', { username });
 
-    socket.on('msg', (msg) => {
+    socket.on('message', (msg) => {
       console.log(msg);
       setMessages((messages) => [...messages, msg]);
     });
 
-    console.log(messages);
+    socket.on('currentUsers', (user) => {
+      console.log(user);
+      setUsers((users) => [...users, user]);
+    });
   }, []);
+
+  useEffect(() => {}, [username]);
 
   const displayMsgs = messages.map((msg, index) => (
     <div key={index} className='message'>
@@ -62,6 +56,12 @@ const Chatroom = ({ username }) => {
     </div>
   ));
 
+  const displayActiveUsers =
+    users.length >= 1 ? users.map((user) => <li>{user.username}</li>) : null;
+
+  console.log(messages);
+  console.log(users);
+
   return (
     <div className='chat-container mx-auto mt-5'>
       <div className='header'>
@@ -71,7 +71,7 @@ const Chatroom = ({ username }) => {
           </Navbar.Brand>
 
           <Nav className='ml-auto'>
-            <Button>Leave Room</Button>
+            <Button>Log out</Button>
           </Nav>
         </Navbar>
       </div>
@@ -81,16 +81,10 @@ const Chatroom = ({ username }) => {
           <div>
             <FaUsers /> Active Users
           </div>
-          <ul>
-            <li>Naam</li>
-            <li>Ben</li>
-          </ul>
+          <ul>{displayActiveUsers}</ul>
         </div>
 
         <div className='chat-main'>
-          {/* <div className='text-center font-weight-bold'>Today</div>
-
-          <div className='text-muted'>Naam has joined</div> */}
           <ScrollableFeed>{displayMsgs}</ScrollableFeed>
         </div>
       </div>
@@ -99,7 +93,7 @@ const Chatroom = ({ username }) => {
         <InputGroup className='py-2 px-5'>
           <FormControl
             placeholder='Write a message...'
-            onChange={(e) => handleChange(e)}
+            onChange={(e) => setMsgInput(e.target.value)}
             value={msgInput}
           />
           <InputGroup.Append>
