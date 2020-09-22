@@ -11,6 +11,8 @@ const io = require('socket.io')(server);
 
 const port = process.env.PORT || 5000;
 
+app.use(express.json());
+
 app.use(express.static(path.join(__dirname, 'client/build')));
 
 io.on('connection', (socket) => {
@@ -46,6 +48,22 @@ io.on('connection', (socket) => {
 
     io.emit('message', formatMessage(user.username, msg));
   });
+});
+
+const users = []; //mock db
+
+app.post('/api/users', async (req, res) => {
+  try {
+    const user = { user: req.body.username, password: req.body.password };
+    await users.push(user);
+    res.status(201).send();
+  } catch (error) {
+    res.status(500).send();
+  }
+});
+
+app.get('/api/users', (req, res) => {
+  res.json(users);
 });
 
 server.listen(port, () => console.log(`server started on port ${port}`));

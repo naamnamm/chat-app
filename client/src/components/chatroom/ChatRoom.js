@@ -29,7 +29,7 @@ const Chatroom = ({ username }) => {
   };
 
   useEffect(() => {
-    socket.emit('loggedIn', { username });
+    //socket.emit('loggedIn', { username });
 
     socket.on('message', (msg) => {
       console.log(msg);

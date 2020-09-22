@@ -5,11 +5,29 @@ import { FaComments } from 'react-icons/fa';
 
 const LoginSignup = ({ onUsernameSubmit, handleLoggedin }) => {
   const usernameRef = useRef();
+  const passwordRef = useRef();
 
-  const handleClick = () => {
-    onUsernameSubmit(usernameRef.current.value);
+  const handleClick = async () => {
+    try {
+      const data = {
+        username: usernameRef.current.value,
+        password: passwordRef.current.value,
+      };
 
-    handleLoggedin(true);
+      const config = {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+      };
+
+      const fetchData = await fetch('/api/users', config);
+
+      onUsernameSubmit(usernameRef.current.value);
+
+      handleLoggedin(true);
+    } catch (error) {}
   };
 
   return (
@@ -32,6 +50,8 @@ const LoginSignup = ({ onUsernameSubmit, handleLoggedin }) => {
             type='password'
             placeholder='Password'
             className='w-75 mx-auto my-3'
+            ref={passwordRef}
+            required
           />
 
           <Button
