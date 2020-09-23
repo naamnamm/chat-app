@@ -6,6 +6,7 @@ const express = require('express');
 const app = express();
 
 const http = require('http');
+const { error } = require('console');
 const server = http.createServer(app);
 const io = require('socket.io')(server);
 
@@ -52,18 +53,32 @@ io.on('connection', (socket) => {
 
 const users = []; //mock db
 
-app.post('/api/users', async (req, res) => {
+app.post('/api/users', (req, res) => {
   try {
-    const user = { user: req.body.username, password: req.body.password };
-    await users.push(user);
-    res.status(201).send();
+    const user = { username: req.body.username, password: req.body.password };
+    users.push(user);
+    io.emit('new-login', { activeUsers: users });
   } catch (error) {
-    res.status(500).send();
+    console.log(error);
   }
 });
 
-app.get('/api/users', (req, res) => {
+app.get('/users', (req, res) => {
   res.json(users);
+});
+
+app.post('/users/signup', (req, res) => {
+  const { username, password } = req.body;
+
+  if (users.some((user) => user.username === username)) {
+    res.json('please choose different username');
+  } else {
+    const user = { username, password };
+    users.push(user);
+    res.json(users);
+  }
+
+  console.log(users);
 });
 
 server.listen(port, () => console.log(`server started on port ${port}`));

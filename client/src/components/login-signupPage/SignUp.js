@@ -1,15 +1,36 @@
-import React, { useRef } from 'react';
+import React, { useState, useRef } from 'react';
 import { Modal, Form, Button } from 'react-bootstrap';
 
 const SignUp = ({ closeModal }) => {
   const usernameRef = useRef();
   const passwordRef = useRef();
+  const [account, setAccounts] = useState([]);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-
-    console.log(usernameRef.current.value, passwordRef.current.value);
     closeModal();
+
+    try {
+      const data = {
+        username: usernameRef.current.value,
+        password: passwordRef.current.value,
+      };
+
+      const config = {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+      };
+
+      const fetchData = await fetch('/users/signup', config);
+      const response = await fetchData.json();
+
+      console.log(response);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
