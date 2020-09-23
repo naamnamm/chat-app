@@ -1,11 +1,17 @@
-import React, { useRef } from 'react';
-import { Container, Card, Form, Button } from 'react-bootstrap';
+import React, { useState, useRef } from 'react';
+import { Container, Card, Form, Button, Modal } from 'react-bootstrap';
 import './LoginSignup.css';
 import { FaComments } from 'react-icons/fa';
+import SignUp from './SignUp';
 
 const LoginSignup = ({ onUsernameSubmit, handleLoggedin }) => {
   const usernameRef = useRef();
   const passwordRef = useRef();
+  const [modalOpen, setModalOpen] = useState(false);
+
+  const closeModal = () => {
+    setModalOpen(false);
+  };
 
   const handleClick = async () => {
     try {
@@ -72,9 +78,17 @@ const LoginSignup = ({ onUsernameSubmit, handleLoggedin }) => {
 
         <h5 className='mt-4'>Join us today</h5>
 
-        <Button variant='outline-light' className='mt-4 '>
+        <Button
+          onClick={() => setModalOpen(true)}
+          variant='outline-light'
+          className='mt-4 '
+        >
           Sign up
         </Button>
+
+        <Modal show={modalOpen} onHide={closeModal}>
+          {modalOpen === true ? <SignUp closeModal={closeModal} /> : null}
+        </Modal>
       </Container>
     </div>
   );
