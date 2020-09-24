@@ -8,6 +8,7 @@ const LoginSignup = ({ onUsernameSubmit, handleLoggedin }) => {
   const usernameRef = useRef();
   const passwordRef = useRef();
   const [modalOpen, setModalOpen] = useState(false);
+  const [errorMsg, setErrorMsg] = useState('');
 
   const closeModal = () => {
     setModalOpen(false);
@@ -28,12 +29,17 @@ const LoginSignup = ({ onUsernameSubmit, handleLoggedin }) => {
         body: JSON.stringify(data),
       };
 
-      const fetchData = await fetch('/api/users', config);
+      const response = await fetch('/users/login', config);
 
-      onUsernameSubmit(usernameRef.current.value);
-
-      handleLoggedin(true);
-    } catch (error) {}
+      if (response.status === 200) {
+        onUsernameSubmit(usernameRef.current.value);
+        handleLoggedin(true);
+      } else {
+        setErrorMsg('username/password not valid');
+      }
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
@@ -70,6 +76,8 @@ const LoginSignup = ({ onUsernameSubmit, handleLoggedin }) => {
           <div>
             <a href='/'> Forgot password?</a>
           </div>
+
+          {errorMsg ? <div className='text-danger'>{errorMsg}</div> : null}
         </Card.Body>
       </Container>
 

@@ -21,28 +21,22 @@ const Chatroom = ({ username }) => {
   const [users, setUsers] = useState([]);
 
   const handleClick = (msgInput) => {
-    //emit new msg to server
     socket.emit('chatMsg', msgInput);
-
-    //then set MsgInput to ''
     setMsgInput('');
   };
 
   useEffect(() => {
-    //socket.emit('loggedIn', { username });
+    //get active users
 
     socket.on('message', (msg) => {
       console.log(msg);
       setMessages((messages) => [...messages, msg]);
     });
 
-    socket.on('currentUsers', (user) => {
-      console.log(user);
-      setUsers((users) => [...users, user]);
+    socket.on('new-login', ({ activeUsers }) => {
+      setUsers(activeUsers);
     });
   }, []);
-
-  useEffect(() => {}, [username]);
 
   const displayMsgs = messages.map((msg, index) => (
     <div key={index} className='message'>

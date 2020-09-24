@@ -6,7 +6,6 @@ const express = require('express');
 const app = express();
 
 const http = require('http');
-const { error } = require('console');
 const server = http.createServer(app);
 const io = require('socket.io')(server);
 
@@ -25,8 +24,6 @@ io.on('connection', (socket) => {
       'message',
       formatMessage('chatbot', `Welcome to chatroom, ${user.username}`)
     );
-
-    io.emit('currentUsers', user);
 
     //emit to all user accept use that is connecting
     socket.broadcast.emit(
@@ -51,34 +48,48 @@ io.on('connection', (socket) => {
   });
 });
 
-const users = []; //mock db
+const registeredUsers = []; //mock db
+const activeUsers = [];
 
-app.post('/api/users', (req, res) => {
+app.post('/users/login', (req, res) => {
   try {
-    const user = { username: req.body.username, password: req.body.password };
-    users.push(user);
-    io.emit('new-login', { activeUsers: users });
+    const { username, password } = req.body;
+
+    const user = { username, password };
+
+    registeredUsers.length >= 1
+      ? registeredUsers.forEach((u) => {
+          if (u.username === username && u.password === password) {
+            activeUsers.push(user);
+
+            io.emit('new-login', { activeUsers });
+            // return 200 response
+            res.send();
+          } else {
+            // return 200 response
+            res.status(403).send('login not valid');
+          }
+        })
+      : res.status(403).send('login not valid');
   } catch (error) {
     console.log(error);
   }
 });
 
-app.get('/users', (req, res) => {
-  res.json(users);
-});
-
 app.post('/users/signup', (req, res) => {
   const { username, password } = req.body;
 
-  if (users.some((user) => user.username === username)) {
+  if (registeredUsers.some((user) => user.username === username)) {
     res.json('please choose different username');
   } else {
     const user = { username, password };
-    users.push(user);
-    res.json(users);
+    registeredUsers.push(user);
+    res.send(registeredUsers);
   }
-
-  console.log(users);
 });
 
 server.listen(port, () => console.log(`server started on port ${port}`));
+
+// app.get('/users', (req, res) => {
+//   res.json(users);
+// });
