@@ -79,12 +79,16 @@ app.post('/users/login', (req, res) => {
 app.post('/users/signup', (req, res) => {
   const { username, password } = req.body;
 
-  if (registeredUsers.some((user) => user.username === username)) {
-    res.json('please choose different username');
+  const userMatch = registeredUsers.find((user) => user.username === username);
+
+  if (!userMatch) {
+    const newUser = { id: Date.now(), username, password };
+    registeredUsers.push(newUser);
+    res.send({ data: registeredUsers });
   } else {
-    const user = { username, password };
-    registeredUsers.push(user);
-    res.send(registeredUsers);
+    res
+      .status(401)
+      .send({ error: { code: 401, message: 'Username already exists' } });
   }
 });
 

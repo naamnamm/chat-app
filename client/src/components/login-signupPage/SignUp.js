@@ -4,11 +4,11 @@ import { Modal, Form, Button } from 'react-bootstrap';
 const SignUp = ({ closeModal }) => {
   const usernameRef = useRef();
   const passwordRef = useRef();
-  const [account, setAccounts] = useState([]);
+  const [registeredUser, setRegisteredUser] = useState([]);
+  const [errorMsg, setErrorMsg] = useState('');
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    closeModal();
 
     try {
       const data = {
@@ -28,9 +28,22 @@ const SignUp = ({ closeModal }) => {
       const response = await fetchData.json();
 
       console.log(response);
+      console.log(response.data);
+
+      if ('error' in response) {
+        setErrorMsg(response.error.message);
+      }
+
+      if ('data' in response) {
+        closeModal();
+        setRegisteredUser(response.data);
+      }
     } catch (error) {
       console.log(error);
     }
+
+    console.log(registeredUser);
+    console.log(errorMsg);
   };
 
   return (
@@ -47,6 +60,7 @@ const SignUp = ({ closeModal }) => {
             <Form.Control type='text' ref={passwordRef} required />
           </Form.Group>
           <Button type='submit'>Sign up</Button>
+          {errorMsg ? <div className='text-danger'>{errorMsg}</div> : null}
         </Form>
       </Modal.Body>
     </>
