@@ -27,6 +27,11 @@ const Chatroom = ({ username }) => {
 
   useEffect(() => {
     //get active users
+    fetch('/users?active=true')
+      .then((res) => res.json())
+      .then((data) => setUsers(data));
+
+    socket.emit('loggedIn', { username });
 
     socket.on('message', (msg) => {
       console.log(msg);

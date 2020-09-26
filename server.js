@@ -42,6 +42,7 @@ io.on('connection', (socket) => {
 
   //2. catch message from the client
   socket.on('chatMsg', (msg) => {
+    console.log(msg);
     const user = getCurrentUser(socket.id);
 
     io.emit('message', formatMessage(user.username, msg));
@@ -51,26 +52,40 @@ io.on('connection', (socket) => {
 const registeredUsers = []; //mock db
 const activeUsers = [];
 
+app.get('/users', (req, res) => {
+  if (req.query.active === 'true') {
+    res.send(activeUsers);
+  }
+  res.send([]);
+});
+
 app.post('/users/login', (req, res) => {
   try {
     const { username, password } = req.body;
 
     const user = { username, password };
 
+    console.log(registeredUsers);
+
     registeredUsers.length >= 1
       ? registeredUsers.forEach((u) => {
+          console.log(u);
+          console.log(username, password);
           if (u.username === username && u.password === password) {
             activeUsers.push(user);
 
             io.emit('new-login', { activeUsers });
-            // return 200 response
+
             res.send();
           } else {
-            // return 200 response
-            res.status(403).send('login not valid');
+            res.status(403).send({
+              error: { code: 403, message: 'Invalid Username or Password' },
+            });
           }
         })
-      : res.status(403).send('login not valid');
+      : res.status(403).send({
+          error: { code: 403, message: 'Invalid Username or Password' },
+        });
   } catch (error) {
     console.log(error);
   }
@@ -82,7 +97,7 @@ app.post('/users/signup', (req, res) => {
   const userMatch = registeredUsers.find((user) => user.username === username);
 
   if (!userMatch) {
-    const newUser = { id: Date.now(), username, password };
+    const newUser = { username, password };
     registeredUsers.push(newUser);
     res.send({ data: registeredUsers });
   } else {

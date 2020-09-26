@@ -30,7 +30,8 @@ const LoginSignup = ({ onUsernameSubmit, handleLoggedin }) => {
       };
 
       const response = await fetch('/users/login', config);
-
+      //const response = await fetchData.json();
+      console.log(response);
       if (response.status === 200) {
         onUsernameSubmit(usernameRef.current.value);
         handleLoggedin(true);
