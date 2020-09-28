@@ -63,29 +63,42 @@ app.post('/users/login', (req, res) => {
   try {
     const { username, password } = req.body;
 
-    const user = { username, password };
-
     console.log(registeredUsers);
 
-    registeredUsers.length >= 1
-      ? registeredUsers.forEach((u) => {
-          console.log(u);
-          console.log(username, password);
-          if (u.username === username && u.password === password) {
-            activeUsers.push(user);
+    //to prevent user from logging in twice
+    const alreadyLoggedIn = activeUsers.some(
+      (user) => user.username === username
+    );
 
-            io.emit('new-login', { activeUsers });
+    if (alreadyLoggedIn) {
+      res.status(403).send({
+        error: { code: 403, message: 'You are already logged in.' },
+      });
+      return;
+    }
 
-            res.send();
-          } else {
-            res.status(403).send({
-              error: { code: 403, message: 'Invalid Username or Password' },
-            });
-          }
-        })
-      : res.status(403).send({
-          error: { code: 403, message: 'Invalid Username or Password' },
+    const usernameMatch = registeredUsers.find((user) => {
+      console.log(user);
+      return user.username === username;
+    });
+
+    if (usernameMatch) {
+      let passwordMatch = usernameMatch.password === password;
+      if (passwordMatch) {
+        const user = { username, password };
+        activeUsers.push(user);
+        io.emit('new-login', { activeUsers });
+        res.send();
+      } else {
+        res.status(403).send({
+          error: { code: 403, message: 'Invalid Password' },
         });
+      }
+    } else {
+      res.status(403).send({
+        error: { code: 403, message: 'Invalid Username' },
+      });
+    }
   } catch (error) {
     console.log(error);
   }
@@ -112,3 +125,23 @@ server.listen(port, () => console.log(`server started on port ${port}`));
 // app.get('/users', (req, res) => {
 //   res.json(users);
 // });
+// registeredUsers.length >= 1
+// ? registeredUsers.forEach((u) => {
+//     console.log(u);
+//     console.log(username, password);
+//     if (u.username === username && u.password === password) {
+//       activeUsers.push(user);
+
+//       io.emit('new-login', { activeUsers });
+
+//       res.send();
+//     } else {
+//       res.status(403).send({
+//         error: { code: 403, message: 'Invalid Username or Password' },
+//       });
+//     }
+//   })
+// : res.status(403).send({
+//     error: { code: 403, message: 'Invalid Username or Password' },
+//   });
+// }

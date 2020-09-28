@@ -30,12 +30,16 @@ const LoginSignup = ({ onUsernameSubmit, handleLoggedin }) => {
       };
 
       const response = await fetch('/users/login', config);
-      //const response = await fetchData.json();
       console.log(response);
+
       if (response.status === 200) {
+        console.log(response);
         onUsernameSubmit(usernameRef.current.value);
         handleLoggedin(true);
-      } else {
+      }
+
+      if (response.status === 403) {
+        console.log(response.error);
         setErrorMsg('username/password not valid');
       }
     } catch (error) {
