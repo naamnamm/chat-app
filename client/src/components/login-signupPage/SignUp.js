@@ -25,8 +25,9 @@ const SignUp = ({ closeModal }) => {
       };
 
       const fetchData = await fetch('/users/signup', config);
+      console.log(fetchData);
       const response = await fetchData.json();
-
+      console.log(response);
       if ('error' in response) {
         setErrorMsg(response.error.message);
       }

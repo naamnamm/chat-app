@@ -5,34 +5,19 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "Launch Chrome",
-      "request": "launch",
-      "type": "pwa-chrome",
-      "url": "http://localhost:8080",
-      "webRoot": "${workspaceFolder}"
-    },
-    {
-      "name": "Attach by Process ID",
-      "processId": "${command:PickProcess}",
+      "name": "Nodemon",
+      "port": 9229,
       "request": "attach",
       "skipFiles": ["<node_internals>/**"],
-      "type": "pwa-node"
-    },
-
-    {
-      "name": "Launch via NPM",
-      "request": "launch",
-      "runtimeArgs": ["run-script", "debug"],
-      "runtimeExecutable": "npm",
-      "skipFiles": ["<node_internals>/**"],
-      "type": "pwa-node"
+      "type": "pwa-node",
+      "restart": true
     },
 
     {
       "type": "chrome",
       "request": "launch",
       "name": "Launch Chrome against localhost",
-      "url": "http://localhost:8080",
+      "url": "http://localhost:5000/",
       "webRoot": "${workspaceFolder}/src",
       "trace": true
     },

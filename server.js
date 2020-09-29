@@ -1,6 +1,6 @@
 const path = require('path');
 const formatMessage = require('./utils/message');
-const { userJoin, getCurrentUser } = require('./utils/users');
+const { userJoin, getCurrentUser, userLeave } = require('./utils/users');
 
 const express = require('express');
 const app = express();
@@ -32,24 +32,26 @@ io.on('connection', (socket) => {
     );
   });
 
-  //broadcast to everybody
-  //io.emit()
-  //Catch event from the client
   //1. Runs when client disconnect
-  socket.on('disconnect', () => {
-    io.emit('message', 'A user has left the chat');
+  socket.on('disconnect', ({ username }) => {
+    const user = userLeave(socket.id, username);
+    //emit to all user accept use that disconnects
+    socket.broadcast.emit(
+      'message',
+      formatMessage('chatbot', `${user.username} has left the chat`)
+    );
   });
 
   //2. catch message from the client
   socket.on('chatMsg', (msg) => {
-    console.log(msg);
     const user = getCurrentUser(socket.id);
 
+    //broadcast to everybody - io.emit()
     io.emit('message', formatMessage(user.username, msg));
   });
 });
 
-const registeredUsers = []; //mock db
+const registeredUsers = [];
 const activeUsers = [];
 
 app.get('/users', (req, res) => {
@@ -88,7 +90,7 @@ app.post('/users/login', (req, res) => {
         const user = { username, password };
         activeUsers.push(user);
         io.emit('new-login', { activeUsers });
-        res.send();
+        res.send({ data: activeUsers });
       } else {
         res.status(403).send({
           error: { code: 403, message: 'Invalid Password' },

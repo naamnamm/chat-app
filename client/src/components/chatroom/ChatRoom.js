@@ -41,6 +41,8 @@ const Chatroom = ({ username }) => {
     socket.on('new-login', ({ activeUsers }) => {
       setUsers(activeUsers);
     });
+
+    socket.emit('disconnect', { username });
   }, []);
 
   const displayMsgs = messages.map((msg, index) => (
@@ -56,7 +58,9 @@ const Chatroom = ({ username }) => {
   ));
 
   const displayActiveUsers =
-    users.length >= 1 ? users.map((user) => <li>{user.username}</li>) : null;
+    users.length >= 1
+      ? users.map((user, index) => <li key={index}> {user.username}</li>)
+      : null;
 
   console.log(messages);
   console.log(users);

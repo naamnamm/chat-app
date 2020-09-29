@@ -15,8 +15,16 @@ function getCurrentUser(id) {
 }
 
 // user leaves
+function userLeave(id, username) {
+  const user = { id, username };
+
+  users.filter((user) => user.id != id);
+
+  return user;
+}
 
 module.exports = {
   userJoin,
   getCurrentUser,
+  userLeave,
 };

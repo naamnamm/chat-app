@@ -29,19 +29,28 @@ const LoginSignup = ({ onUsernameSubmit, handleLoggedin }) => {
         body: JSON.stringify(data),
       };
 
-      const response = await fetch('/users/login', config);
-      console.log(response);
+      const fetchData = await fetch('/users/login', config);
+      const response = await fetchData.json();
 
-      if (response.status === 200) {
-        console.log(response);
+      if ('error' in response) {
+        setErrorMsg(response.error.message);
+      }
+
+      if ('data' in response) {
         onUsernameSubmit(usernameRef.current.value);
         handleLoggedin(true);
       }
 
-      if (response.status === 403) {
-        console.log(response.error);
-        setErrorMsg('username/password not valid');
-      }
+      // if (response.status === 200) {
+      //   console.log(response);
+      //   onUsernameSubmit(usernameRef.current.value);
+      //   handleLoggedin(true);
+      // }
+
+      // if (response.status === 403) {
+      //   console.log(response.error);
+      //   setErrorMsg('username/password not valid');
+      // }
     } catch (error) {
       console.log(error);
     }
