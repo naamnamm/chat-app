@@ -16,7 +16,9 @@ app.use(express.json());
 app.use(express.static(path.join(__dirname, 'client/build')));
 
 io.on('connection', (socket) => {
+  //console.log(socket.id);
   socket.on('loggedIn', ({ username }) => {
+    console.log(username);
     //emit to single user that is connecting
     const user = userJoin(socket.id, username);
 
@@ -33,13 +35,16 @@ io.on('connection', (socket) => {
   });
 
   //1. Runs when client disconnect
-  socket.on('disconnect', ({ username }) => {
-    const user = userLeave(socket.id, username);
+  socket.on('disconnect', () => {
+    const user = userLeave(socket.id);
+    console.log(user);
+    if (user) {
+      io.emit(
+        'message',
+        formatMessage('chatbot', `${user.username} has left the chat`)
+      );
+    }
     //emit to all user accept use that disconnects
-    socket.broadcast.emit(
-      'message',
-      formatMessage('chatbot', `${user.username} has left the chat`)
-    );
   });
 
   //2. catch message from the client

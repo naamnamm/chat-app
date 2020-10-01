@@ -15,12 +15,12 @@ function getCurrentUser(id) {
 }
 
 // user leaves
-function userLeave(id, username) {
-  const user = { id, username };
+function userLeave(id) {
+  const index = users.findIndex((user) => user.id === id);
 
-  users.filter((user) => user.id != id);
-
-  return user;
+  if (index !== 1) {
+    return users.splice(index, 1)[0];
+  }
 }
 
 module.exports = {

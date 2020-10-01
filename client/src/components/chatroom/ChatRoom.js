@@ -13,8 +13,6 @@ import { FaSmile, FaUsers } from 'react-icons/fa';
 import io from 'socket.io-client';
 import ScrollableFeed from 'react-scrollable-feed';
 
-const socket = io('http://localhost:5000/');
-
 const Chatroom = ({ username }) => {
   const [messages, setMessages] = useState([]);
   const [msgInput, setMsgInput] = useState('');
@@ -26,6 +24,8 @@ const Chatroom = ({ username }) => {
   };
 
   useEffect(() => {
+    const socket = io('http://localhost:5000/');
+
     //get active users
     fetch('/users?active=true')
       .then((res) => res.json())
@@ -41,8 +41,6 @@ const Chatroom = ({ username }) => {
     socket.on('new-login', ({ activeUsers }) => {
       setUsers(activeUsers);
     });
-
-    socket.emit('disconnect', { username });
   }, []);
 
   const displayMsgs = messages.map((msg, index) => (
