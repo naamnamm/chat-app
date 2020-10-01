@@ -1,17 +1,10 @@
-import React, { useState, useEffect, useRef } from 'react';
-import {
-  Button,
-  Toast,
-  Navbar,
-  Nav,
-  InputGroup,
-  FormControl,
-  Form,
-} from 'react-bootstrap';
+import React, { useState, useEffect } from 'react';
+import { Button, Navbar, Nav, InputGroup, Form } from 'react-bootstrap';
 import './ChatRoom.css';
 import { FaSmile, FaUsers } from 'react-icons/fa';
 import io from 'socket.io-client';
 import ScrollableFeed from 'react-scrollable-feed';
+import Message from './Message';
 
 const socket = io('http://localhost:5000/');
 
@@ -50,15 +43,7 @@ const Chatroom = ({ username }) => {
   }, []);
 
   const displayMsgs = messages.map((msg, index) => (
-    <div key={index} className='message'>
-      <Toast className='ml-auto mb-0'>
-        {' '}
-        <Toast.Body>{msg.text}</Toast.Body>
-      </Toast>
-      <div className='text-right'>
-        {msg.username} {msg.time}
-      </div>
-    </div>
+    <Message key={index} msg={msg} currentUser={username} />
   ));
 
   const displayActiveUsers =
