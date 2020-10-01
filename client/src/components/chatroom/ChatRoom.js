@@ -13,6 +13,8 @@ import { FaSmile, FaUsers } from 'react-icons/fa';
 import io from 'socket.io-client';
 import ScrollableFeed from 'react-scrollable-feed';
 
+const socket = io('http://localhost:5000/');
+
 const Chatroom = ({ username }) => {
   const [messages, setMessages] = useState([]);
   const [msgInput, setMsgInput] = useState('');
@@ -23,9 +25,9 @@ const Chatroom = ({ username }) => {
     setMsgInput('');
   };
 
-  useEffect(() => {
-    const socket = io('http://localhost:5000/');
+  const handleLogOut = () => {};
 
+  useEffect(() => {
     //get active users
     fetch('/users?active=true')
       .then((res) => res.json())
@@ -39,6 +41,10 @@ const Chatroom = ({ username }) => {
     });
 
     socket.on('new-login', ({ activeUsers }) => {
+      setUsers(activeUsers);
+    });
+
+    socket.on('user-leave', ({ activeUsers }) => {
       setUsers(activeUsers);
     });
   }, []);
@@ -60,9 +66,6 @@ const Chatroom = ({ username }) => {
       ? users.map((user, index) => <li key={index}> {user.username}</li>)
       : null;
 
-  console.log(messages);
-  console.log(users);
-
   return (
     <div className='chat-container mx-auto mt-5'>
       <div className='header'>
@@ -72,7 +75,7 @@ const Chatroom = ({ username }) => {
           </Navbar.Brand>
 
           <Nav className='ml-auto'>
-            <Button>Log out</Button>
+            <Button onClick={() => handleLogOut()}>Log out</Button>
           </Nav>
         </Navbar>
       </div>
@@ -92,7 +95,7 @@ const Chatroom = ({ username }) => {
 
       <Form className='input-msg'>
         <InputGroup className='py-2 px-5'>
-          <FormControl
+          <Form.Control
             placeholder='Write a message...'
             onChange={(e) => setMsgInput(e.target.value)}
             value={msgInput}

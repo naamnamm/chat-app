@@ -15,10 +15,12 @@ app.use(express.json());
 
 app.use(express.static(path.join(__dirname, 'client/build')));
 
+const registeredUsers = [];
+const activeUsers = [];
+
 io.on('connection', (socket) => {
   //console.log(socket.id);
   socket.on('loggedIn', ({ username }) => {
-    console.log(username);
     //emit to single user that is connecting
     const user = userJoin(socket.id, username);
 
@@ -37,14 +39,20 @@ io.on('connection', (socket) => {
   //1. Runs when client disconnect
   socket.on('disconnect', () => {
     const user = userLeave(socket.id);
-    console.log(user);
+
     if (user) {
       io.emit(
         'message',
         formatMessage('chatbot', `${user.username} has left the chat`)
       );
+
+      const index = activeUsers.findIndex((u) => u.username === user.username);
+
+      if (index !== -1) {
+        activeUsers.splice(index, 1);
+        io.emit('user-leave', { activeUsers });
+      }
     }
-    //emit to all user accept use that disconnects
   });
 
   //2. catch message from the client
@@ -56,9 +64,6 @@ io.on('connection', (socket) => {
   });
 });
 
-const registeredUsers = [];
-const activeUsers = [];
-
 app.get('/users', (req, res) => {
   if (req.query.active === 'true') {
     res.send(activeUsers);
@@ -69,8 +74,6 @@ app.get('/users', (req, res) => {
 app.post('/users/login', (req, res) => {
   try {
     const { username, password } = req.body;
-
-    console.log(registeredUsers);
 
     //to prevent user from logging in twice
     const alreadyLoggedIn = activeUsers.some(
@@ -85,7 +88,6 @@ app.post('/users/login', (req, res) => {
     }
 
     const usernameMatch = registeredUsers.find((user) => {
-      console.log(user);
       return user.username === username;
     });
 
