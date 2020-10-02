@@ -12,7 +12,7 @@ const App = () => {
 
   const displayPage =
     isLoggedIn === true ? (
-      <ChatRoom username={username} />
+      <ChatRoom username={username} handleLoggedout={setIsLoggedIn} />
     ) : (
       <LoginSignup
         onUsernameSubmit={setUsername}

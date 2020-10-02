@@ -64,11 +64,13 @@ io.on('connection', (socket) => {
   });
 });
 
-app.get('/users', (req, res) => {
-  if (req.query.active === 'true') {
+app.get('/users/login/:username', (req, res) => {
+  const name = req.params.username.slice(1);
+  const found = activeUsers.find((u) => u.username === name);
+
+  if (found) {
     res.send(activeUsers);
   }
-  res.send([]);
 });
 
 app.post('/users/login', (req, res) => {
@@ -129,6 +131,17 @@ app.post('/users/signup', (req, res) => {
   }
 });
 
+// app.post('/users/logout', (req, res) => {
+//   const { username } = req.body;
+
+//   const index = activeUsers.findIndex((user) => user.username === username);
+
+//   if (index !== -1) {
+//     activeUsers.splice(index, 1);
+//     res.send({ data: activeUsers });
+//   }
+// });
+
 server.listen(port, () => console.log(`server started on port ${port}`));
 
 // app.get('/users', (req, res) => {
@@ -154,3 +167,10 @@ server.listen(port, () => console.log(`server started on port ${port}`));
 //     error: { code: 403, message: 'Invalid Username or Password' },
 //   });
 // }
+
+// app.get('/users', (req, res) => {
+//   if (req.query.active === 'true') {
+//     res.send(activeUsers);
+//   }
+//   res.send([]);
+// });

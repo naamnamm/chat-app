@@ -8,7 +8,7 @@ import Message from './Message';
 
 const socket = io('http://localhost:5000/');
 
-const Chatroom = ({ username }) => {
+const Chatroom = ({ username, handleLoggedout }) => {
   const [messages, setMessages] = useState([]);
   const [msgInput, setMsgInput] = useState('');
   const [users, setUsers] = useState([]);
@@ -18,11 +18,33 @@ const Chatroom = ({ username }) => {
     setMsgInput('');
   };
 
-  const handleLogOut = () => {};
+  // const setLoggedOut = () => {
+  //   //make a post request to remove user from active users
+  //   try {
+  //     const config = {
+  //       method: 'POST',
+  //       headers: {
+  //         'Content-Type': 'application/json',
+  //       },
+  //       body: JSON.stringify(username),
+  //     };
+
+  //     const fetchLogout = await fetch('/users/logout', config);
+  //     const response = await fetchLogout.json();
+
+  //     if ('data' in response) {
+  //       handleLoggedout(false);
+  //       setUsers(response.data);
+  //     }
+
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // };
 
   useEffect(() => {
     //get active users
-    fetch('/users?active=true')
+    fetch(`/users/login/:${username}`)
       .then((res) => res.json())
       .then((data) => setUsers(data));
 
@@ -60,7 +82,7 @@ const Chatroom = ({ username }) => {
           </Navbar.Brand>
 
           <Nav className='ml-auto'>
-            <Button onClick={() => handleLogOut()}>Log out</Button>
+            <Button onClick={() => setLoggedOut()}>Log out</Button>
           </Nav>
         </Navbar>
       </div>
@@ -118,4 +140,7 @@ export default Chatroom;
   </Toast>
   <div className='text-left'>Ben 8:32 am</div>
 </div> */
+  // fetch('/users?active=true')
+  //   .then((res) => res.json())
+  //   .then((data) => setUsers(data));
 }

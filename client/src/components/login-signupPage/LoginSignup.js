@@ -41,6 +41,7 @@ const LoginSignup = ({ onUsernameSubmit, handleLoggedin }) => {
         handleLoggedin(true);
       }
 
+      //this doesn't work, Why?
       // if (response.status === 200) {
       //   console.log(response);
       //   onUsernameSubmit(usernameRef.current.value);
