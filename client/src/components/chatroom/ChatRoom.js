@@ -12,38 +12,35 @@ const Chatroom = ({ username, handleLoggedout }) => {
   const [messages, setMessages] = useState([]);
   const [msgInput, setMsgInput] = useState('');
   const [users, setUsers] = useState([]);
+  const [sample, setSample] = useState(true);
 
   const handleClick = (msgInput) => {
     socket.emit('chatMsg', msgInput);
     setMsgInput('');
   };
 
-  // const setLoggedOut = () => {
-  //   //make a post request to remove user from active users
-  //   try {
-  //     const config = {
-  //       method: 'POST',
-  //       headers: {
-  //         'Content-Type': 'application/json',
-  //       },
-  //       body: JSON.stringify(username),
-  //     };
+  const setLoggedOut = async () => {
+    try {
+      const config = {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ username }),
+      };
 
-  //     const fetchLogout = await fetch('/users/logout', config);
-  //     const response = await fetchLogout.json();
+      const fetchLogout = await fetch('/users/logout', config);
+      const response = await fetchLogout.json();
 
-  //     if ('data' in response) {
-  //       handleLoggedout(false);
-  //       setUsers(response.data);
-  //     }
-
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
-  // };
+      if ('data' in response) {
+        handleLoggedout(false);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   useEffect(() => {
-    //get active users
     fetch(`/users/login/:${username}`)
       .then((res) => res.json())
       .then((data) => setUsers(data));
@@ -51,7 +48,6 @@ const Chatroom = ({ username, handleLoggedout }) => {
     socket.emit('loggedIn', { username });
 
     socket.on('message', (msg) => {
-      console.log(msg);
       setMessages((messages) => [...messages, msg]);
     });
 

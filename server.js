@@ -131,16 +131,22 @@ app.post('/users/signup', (req, res) => {
   }
 });
 
-// app.post('/users/logout', (req, res) => {
-//   const { username } = req.body;
+app.post('/users/logout', (req, res) => {
+  const { username } = req.body;
 
-//   const index = activeUsers.findIndex((user) => user.username === username);
+  const index = activeUsers.findIndex((user) => user.username === username);
+  const logoutUser = activeUsers.find((u) => u.username === username);
 
-//   if (index !== -1) {
-//     activeUsers.splice(index, 1);
-//     res.send({ data: activeUsers });
-//   }
-// });
+  if (index !== -1) {
+    activeUsers.splice(index, 1);
+    io.emit('user-leave', { activeUsers });
+    io.emit(
+      'message',
+      formatMessage('chatbot', `${logoutUser.username} has left the chat`)
+    );
+    res.send({ data: activeUsers });
+  }
+});
 
 server.listen(port, () => console.log(`server started on port ${port}`));
 

@@ -14,7 +14,7 @@ const LoginSignup = ({ onUsernameSubmit, handleLoggedin }) => {
     setModalOpen(false);
   };
 
-  const handleClick = async () => {
+  const handleLogIn = async () => {
     try {
       const data = {
         username: usernameRef.current.value,
@@ -82,7 +82,7 @@ const LoginSignup = ({ onUsernameSubmit, handleLoggedin }) => {
           />
 
           <Button
-            onClick={handleClick}
+            onClick={handleLogIn}
             className='my-3 button-color border-light'
           >
             Log in
