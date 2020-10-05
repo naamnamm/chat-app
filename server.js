@@ -1,4 +1,5 @@
 const path = require('path');
+const bcrypt = require('bcrypt');
 const formatMessage = require('./utils/message');
 const { userJoin, getCurrentUser, userLeave } = require('./utils/users');
 
@@ -73,7 +74,7 @@ app.get('/users/login/:username', (req, res) => {
   }
 });
 
-app.post('/users/login', (req, res) => {
+app.post('/users/login', async (req, res) => {
   try {
     const { username, password } = req.body;
 
@@ -94,10 +95,14 @@ app.post('/users/login', (req, res) => {
     });
 
     if (usernameMatch) {
-      let passwordMatch = usernameMatch.password === password;
+      const passwordMatch = await bcrypt.compare(
+        password,
+        usernameMatch.password
+      );
       if (passwordMatch) {
-        const user = { username, password };
-        activeUsers.push(user);
+        const loginUser = { username, password: usernameMatch.password };
+        console.log(loginUser);
+        activeUsers.push(loginUser);
         io.emit('new-login', { activeUsers });
         res.send({ data: activeUsers });
       } else {
@@ -115,19 +120,26 @@ app.post('/users/login', (req, res) => {
   }
 });
 
-app.post('/users/signup', (req, res) => {
-  const { username, password } = req.body;
+app.post('/users/signup', async (req, res) => {
+  const userMatch = registeredUsers.find(
+    (user) => user.username === req.body.username
+  );
 
-  const userMatch = registeredUsers.find((user) => user.username === username);
-
-  if (!userMatch) {
-    const newUser = { username, password };
-    registeredUsers.push(newUser);
-    res.send({ data: registeredUsers });
-  } else {
-    res
-      .status(401)
-      .send({ error: { code: 401, message: 'Username already exists' } });
+  try {
+    if (!userMatch) {
+      const saltRounds = await bcrypt.genSalt();
+      const passHash = await bcrypt.hash(req.body.password, saltRounds);
+      const newUser = { username: req.body.username, password: passHash };
+      console.log(newUser);
+      registeredUsers.push(newUser);
+      res.status(201).send({ data: registeredUsers });
+    } else {
+      res
+        .status(401)
+        .send({ error: { code: 401, message: 'Username already exists' } });
+    }
+  } catch (error) {
+    console.log(error);
   }
 });
 

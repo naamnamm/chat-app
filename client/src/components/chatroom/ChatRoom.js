@@ -12,7 +12,6 @@ const Chatroom = ({ username, handleLoggedout }) => {
   const [messages, setMessages] = useState([]);
   const [msgInput, setMsgInput] = useState('');
   const [users, setUsers] = useState([]);
-  const [sample, setSample] = useState(true);
 
   const handleClick = (msgInput) => {
     socket.emit('chatMsg', msgInput);
