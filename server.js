@@ -1,3 +1,5 @@
+require('dotenv').config;
+
 const path = require('path');
 const bcrypt = require('bcrypt');
 const formatMessage = require('./utils/message');
@@ -5,6 +7,7 @@ const { userJoin, getCurrentUser, userLeave } = require('./utils/users');
 
 const express = require('express');
 const app = express();
+const jwt = require('jsonwebtoken');
 
 const http = require('http');
 const server = http.createServer(app);
@@ -103,8 +106,14 @@ app.post('/users/login', async (req, res) => {
         const loginUser = { username, password: usernameMatch.password };
         console.log(loginUser);
         activeUsers.push(loginUser);
+
+        //once authentication process is completed
+        //now we serialize user with webtoken
+        const payload = { username: usernameMatch.username };
+        const token = jwt.sign(payload, process.env.ACCESS_TOKEN_SECRET);
+
         io.emit('new-login', { activeUsers });
-        res.send({ data: activeUsers });
+        res.send({ data: activeUsers, token });
       } else {
         res.status(403).send({
           error: { code: 403, message: 'Invalid Password' },
@@ -119,6 +128,8 @@ app.post('/users/login', async (req, res) => {
     console.log(error);
   }
 });
+
+app.get('/test');
 
 app.post('/users/signup', async (req, res) => {
   const userMatch = registeredUsers.find(
