@@ -1,4 +1,4 @@
-require('dotenv').config;
+require('dotenv').config();
 
 const path = require('path');
 const bcrypt = require('bcrypt');
@@ -68,7 +68,22 @@ io.on('connection', (socket) => {
   });
 });
 
+const authenticateToken = (req, res, next) => {
+  const authHeader = req.headers['authorization'];
+  const token = authHeader && auth.split(' ')[1];
+
+  if (token == null) return res.sendStatus(401);
+
+  jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
+    if (err) return res.sendStatus(403);
+    req.user = user;
+    next();
+  });
+};
+
+// fetch route in the chatroom to get username
 app.get('/users/login/:username', (req, res) => {
+  //console.log(req.header);
   const name = req.params.username.slice(1);
   const found = activeUsers.find((u) => u.username === name);
 
@@ -77,6 +92,10 @@ app.get('/users/login/:username', (req, res) => {
   }
 });
 
+// second login route - to verify the token
+app.get('/users/login/verifyToken');
+
+// first login route - to sign the token
 app.post('/users/login', async (req, res) => {
   try {
     const { username, password } = req.body;

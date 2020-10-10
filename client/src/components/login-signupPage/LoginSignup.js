@@ -9,6 +9,7 @@ const LoginSignup = ({ onUsernameSubmit, handleLoggedin }) => {
   const passwordRef = useRef();
   const [modalOpen, setModalOpen] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
+  const [accessToken, setAccessToken] = useState('');
 
   const closeModal = () => {
     setModalOpen(false);
@@ -32,11 +33,16 @@ const LoginSignup = ({ onUsernameSubmit, handleLoggedin }) => {
       const fetchData = await fetch('/users/login', config);
       const response = await fetchData.json();
 
+      console.log(response);
+      console.log(response.token);
+
       if ('error' in response) {
         setErrorMsg(response.error.message);
       }
 
       if ('data' in response) {
+        setAccessToken(response.token);
+        console.log(accessToken);
         onUsernameSubmit(usernameRef.current.value);
         handleLoggedin(true);
       }
