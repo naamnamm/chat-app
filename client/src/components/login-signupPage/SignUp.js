@@ -24,16 +24,16 @@ const SignUp = ({ closeModal }) => {
         body: JSON.stringify(data),
       };
 
-      const fetchData = await fetch('/users/signup', config);
-      console.log(fetchData);
-      const response = await fetchData.json();
+      const response = await fetch('/users/signup', config);
       console.log(response);
-      if ('error' in response) {
-        setErrorMsg(response.error.message);
+      const signupData = await response.json();
+      console.log(signupData);
+      if ('error' in signupData) {
+        setErrorMsg(signupData.error.message);
       }
 
       //can't update registered users why?
-      if ('data' in response) {
+      if ('data' in signupData) {
         // const users = response.data;
         // setRegisteredUser(users);
         // console.log(registeredUser);

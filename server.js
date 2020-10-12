@@ -68,19 +68,6 @@ io.on('connection', (socket) => {
   });
 });
 
-const authenticateToken = (req, res, next) => {
-  const authHeader = req.headers['authorization'];
-  const token = authHeader && auth.split(' ')[1];
-
-  if (token == null) return res.sendStatus(401);
-
-  jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
-    if (err) return res.sendStatus(403);
-    req.user = user;
-    next();
-  });
-};
-
 // fetch route in the chatroom to get username
 app.get('/users/login/:username', (req, res) => {
   //console.log(req.header);
@@ -92,10 +79,26 @@ app.get('/users/login/:username', (req, res) => {
   }
 });
 
-// second login route - to verify the token
-app.get('/users/login/verifyToken');
+const authenticateToken = (req, res, next) => {
+  const authHeader = req.headers['authorization'];
+  const token = authHeader && authHeader.split(' ')[1];
 
-// first login route - to sign the token
+  if (token == null) return res.sendStatus(401);
+
+  jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
+    if (err) return res.sendStatus(403);
+    req.user = user;
+    next();
+  });
+};
+
+// verify token when user posts
+app.post('/users/post', authenticateToken, (req, res) => {
+  console.log('user post:', req.body, user);
+  res.json('authenticated');
+});
+
+// login route & sign token
 app.post('/users/login', async (req, res) => {
   try {
     const { username, password } = req.body;
@@ -122,13 +125,20 @@ app.post('/users/login', async (req, res) => {
         usernameMatch.password
       );
       if (passwordMatch) {
-        const loginUser = { username, password: usernameMatch.password };
+        const loginUser = {
+          userid: usernameMatch.userid,
+          username,
+          password: usernameMatch.password,
+        };
         console.log(loginUser);
         activeUsers.push(loginUser);
 
         //once authentication process is completed
         //now we serialize user with webtoken
-        const payload = { username: usernameMatch.username };
+        const payload = {
+          userid: usernameMatch.userid,
+          username: usernameMatch.username,
+        };
         const token = jwt.sign(payload, process.env.ACCESS_TOKEN_SECRET);
 
         io.emit('new-login', { activeUsers });
@@ -148,8 +158,6 @@ app.post('/users/login', async (req, res) => {
   }
 });
 
-app.get('/test');
-
 app.post('/users/signup', async (req, res) => {
   const userMatch = registeredUsers.find(
     (user) => user.username === req.body.username
@@ -159,7 +167,11 @@ app.post('/users/signup', async (req, res) => {
     if (!userMatch) {
       const saltRounds = await bcrypt.genSalt();
       const passHash = await bcrypt.hash(req.body.password, saltRounds);
-      const newUser = { username: req.body.username, password: passHash };
+      const newUser = {
+        userid: Date.now(),
+        username: req.body.username,
+        password: passHash,
+      };
       console.log(newUser);
       registeredUsers.push(newUser);
       res.status(201).send({ data: registeredUsers });

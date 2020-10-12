@@ -8,13 +8,32 @@ import Message from './Message';
 
 const socket = io('http://localhost:5000/');
 
-const Chatroom = ({ username, handleLoggedout }) => {
+const Chatroom = ({ user, username, handleLoggedout }) => {
   const [messages, setMessages] = useState([]);
   const [msgInput, setMsgInput] = useState('');
   const [users, setUsers] = useState([]);
 
-  const handleClick = (msgInput) => {
+  const handleClick = async (msgInput) => {
+    if (!msgInput) return;
+    console.log(user);
     socket.emit('chatMsg', msgInput);
+
+    try {
+      const config = {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${user.token}`,
+        },
+        body: JSON.stringify({ username, msgInput }),
+      };
+      const response = await fetch('/users/post', config);
+      const msgData = await response.json();
+      console.log(msgData);
+    } catch (error) {
+      console.log(error);
+    }
+
     setMsgInput('');
   };
 

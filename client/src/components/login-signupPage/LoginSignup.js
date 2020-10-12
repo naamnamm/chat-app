@@ -4,7 +4,7 @@ import './LoginSignup.css';
 import { FaComments } from 'react-icons/fa';
 import SignUp from './SignUp';
 
-const LoginSignup = ({ onUsernameSubmit, handleLoggedin }) => {
+const LoginSignup = ({ onUserSubmit, onUsernameSubmit, handleLoggedin }) => {
   const usernameRef = useRef();
   const passwordRef = useRef();
   const [modalOpen, setModalOpen] = useState(false);
@@ -30,34 +30,20 @@ const LoginSignup = ({ onUsernameSubmit, handleLoggedin }) => {
         body: JSON.stringify(data),
       };
 
-      const fetchData = await fetch('/users/login', config);
-      const response = await fetchData.json();
+      const response = await fetch('/users/login', config);
+      const loginData = await response.json();
 
-      console.log(response);
-      console.log(response.token);
+      //console.log(loginData);
 
-      if ('error' in response) {
-        setErrorMsg(response.error.message);
-      }
-
-      if ('data' in response) {
-        setAccessToken(response.token);
-        console.log(accessToken);
+      //debugger;
+      if (!response.ok) {
+        setErrorMsg(loginData.error.message);
+      } else {
+        setAccessToken(loginData.token);
+        onUserSubmit(loginData);
         onUsernameSubmit(usernameRef.current.value);
         handleLoggedin(true);
       }
-
-      //this doesn't work, Why?
-      // if (response.status === 200) {
-      //   console.log(response);
-      //   onUsernameSubmit(usernameRef.current.value);
-      //   handleLoggedin(true);
-      // }
-
-      // if (response.status === 403) {
-      //   console.log(response.error);
-      //   setErrorMsg('username/password not valid');
-      // }
     } catch (error) {
       console.log(error);
     }
