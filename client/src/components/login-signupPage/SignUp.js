@@ -28,17 +28,8 @@ const SignUp = ({ closeModal }) => {
       console.log(response);
       const signupData = await response.json();
       console.log(signupData);
-      if ('error' in signupData) {
-        setErrorMsg(signupData.error.message);
-      }
 
-      //can't update registered users why?
-      if ('data' in signupData) {
-        // const users = response.data;
-        // setRegisteredUser(users);
-        // console.log(registeredUser);
-        closeModal();
-      }
+      !response.ok ? setErrorMsg(signupData.error.message) : closeModal();
     } catch (error) {
       console.log(error);
     }

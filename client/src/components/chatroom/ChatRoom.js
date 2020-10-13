@@ -19,13 +19,14 @@ const Chatroom = ({ user, username, handleLoggedout }) => {
     socket.emit('chatMsg', msgInput);
 
     try {
+      const message = msgInput;
       const config = {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${user.token}`,
         },
-        body: JSON.stringify({ username, msgInput }),
+        body: JSON.stringify({ userid: username, message }),
       };
       const response = await fetch('/users/post', config);
       const msgData = await response.json();
@@ -69,6 +70,7 @@ const Chatroom = ({ user, username, handleLoggedout }) => {
       setMessages((messages) => [...messages, msg]);
     });
 
+    //ok
     socket.on('new-login', ({ activeUsers }) => {
       setUsers(activeUsers);
     });

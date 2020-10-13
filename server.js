@@ -21,6 +21,7 @@ app.use(express.static(path.join(__dirname, 'client/build')));
 
 const registeredUsers = [];
 const activeUsers = [];
+const messages = [];
 
 io.on('connection', (socket) => {
   //console.log(socket.id);
@@ -94,8 +95,12 @@ const authenticateToken = (req, res, next) => {
 
 // verify token when user posts
 app.post('/users/post', authenticateToken, (req, res) => {
-  console.log('user post:', req.body, user);
-  res.json('authenticated');
+  console.log('user post:', req.body, req.user);
+
+  //push msg
+  messages.push(req.body);
+
+  res.json(messages);
 });
 
 // login route & sign token
@@ -128,7 +133,7 @@ app.post('/users/login', async (req, res) => {
         const loginUser = {
           userid: usernameMatch.userid,
           username,
-          password: usernameMatch.password,
+          // password: usernameMatch.password,
         };
         console.log(loginUser);
         activeUsers.push(loginUser);
@@ -142,7 +147,9 @@ app.post('/users/login', async (req, res) => {
         const token = jwt.sign(payload, process.env.ACCESS_TOKEN_SECRET);
 
         io.emit('new-login', { activeUsers });
-        res.send({ data: activeUsers, token });
+        res.status(201).send({ token });
+
+        //res.send({ data: activeUsers, token });
       } else {
         res.status(403).send({
           error: { code: 403, message: 'Invalid Password' },
@@ -174,7 +181,9 @@ app.post('/users/signup', async (req, res) => {
       };
       console.log(newUser);
       registeredUsers.push(newUser);
-      res.status(201).send({ data: registeredUsers });
+      res
+        .status(201)
+        .send({ success: { code: 201, message: 'successfully signed up' } });
     } else {
       res
         .status(401)
