@@ -1,3 +1,6 @@
+// to add welcome user
+// to add user has join
+
 require('dotenv').config();
 
 const path = require('path');
@@ -25,6 +28,8 @@ const messages = [];
 
 io.on('connection', (socket) => {
   //console.log(socket.id);
+  // I can't remove logged-event from the client, otherwise socket.emit won't work
+  // way to get around it?
   socket.on('loggedIn', ({ username }) => {
     //emit to single user that is connecting
     const user = userJoin(socket.id, username);
@@ -41,7 +46,7 @@ io.on('connection', (socket) => {
     );
   });
 
-  //1. Runs when client disconnect
+  //1. Runs when client close out of the browser
   socket.on('disconnect', () => {
     const user = userLeave(socket.id);
 
@@ -58,14 +63,6 @@ io.on('connection', (socket) => {
         io.emit('user-leave', { activeUsers });
       }
     }
-  });
-
-  //2. catch message from the client
-  socket.on('chatMsg', (msg) => {
-    const user = getCurrentUser(socket.id);
-
-    //broadcast to everybody - io.emit()
-    io.emit('message', formatMessage(user.username, msg));
   });
 });
 
@@ -96,11 +93,13 @@ const authenticateToken = (req, res, next) => {
 // verify token when user posts
 app.post('/users/post', authenticateToken, (req, res) => {
   console.log('user post:', req.body, req.user);
+  const { user, message } = req.body;
 
-  //push msg
-  messages.push(req.body);
+  io.emit('message', formatMessage(user.username, message));
+  //io.emit('message', { messages });
 
-  res.json(messages);
+  res.status(201).send({ message: 'successfully posted' });
+  //res.json(req.body);
 });
 
 // login route & sign token
@@ -135,8 +134,9 @@ app.post('/users/login', async (req, res) => {
           username,
           // password: usernameMatch.password,
         };
-        console.log(loginUser);
+        console.log('login user =', loginUser);
         activeUsers.push(loginUser);
+        console.log('active users =', activeUsers);
 
         //once authentication process is completed
         //now we serialize user with webtoken
@@ -147,7 +147,11 @@ app.post('/users/login', async (req, res) => {
         const token = jwt.sign(payload, process.env.ACCESS_TOKEN_SECRET);
 
         io.emit('new-login', { activeUsers });
-        res.status(201).send({ token });
+        res.status(201).send({
+          token,
+          userid: usernameMatch.userid,
+          username: usernameMatch.username,
+        });
 
         //res.send({ data: activeUsers, token });
       } else {
@@ -179,7 +183,7 @@ app.post('/users/signup', async (req, res) => {
         username: req.body.username,
         password: passHash,
       };
-      console.log(newUser);
+      console.log('new sign-up user =', newUser);
       registeredUsers.push(newUser);
       res
         .status(201)
@@ -195,10 +199,11 @@ app.post('/users/signup', async (req, res) => {
 });
 
 app.post('/users/logout', (req, res) => {
-  const { username } = req.body;
+  const { user } = req.body;
+  console.log('test loggedout =', user);
 
-  const index = activeUsers.findIndex((user) => user.username === username);
-  const logoutUser = activeUsers.find((u) => u.username === username);
+  const index = activeUsers.findIndex((u) => u.userid === user.userid);
+  const logoutUser = activeUsers.find((u) => u.userid === user.userid);
 
   if (index !== -1) {
     activeUsers.splice(index, 1);
@@ -207,7 +212,7 @@ app.post('/users/logout', (req, res) => {
       'message',
       formatMessage('chatbot', `${logoutUser.username} has left the chat`)
     );
-    res.send({ data: activeUsers });
+    res.status(201).send({ activeUsers });
   }
 });
 

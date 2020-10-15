@@ -15,8 +15,8 @@ const Chatroom = ({ user, username, handleLoggedout }) => {
 
   const handleClick = async (msgInput) => {
     if (!msgInput) return;
-    console.log(user);
-    socket.emit('chatMsg', msgInput);
+    console.log('post user =', user);
+    //socket.emit('chatMsg', msgInput);
 
     try {
       const message = msgInput;
@@ -26,11 +26,11 @@ const Chatroom = ({ user, username, handleLoggedout }) => {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${user.token}`,
         },
-        body: JSON.stringify({ userid: username, message }),
+        body: JSON.stringify({ user, message }),
       };
       const response = await fetch('/users/post', config);
       const msgData = await response.json();
-      console.log(msgData);
+      console.log('response from a server =', msgData);
     } catch (error) {
       console.log(error);
     }
@@ -39,19 +39,21 @@ const Chatroom = ({ user, username, handleLoggedout }) => {
   };
 
   const setLoggedOut = async () => {
+    console.log('test loggedout =', user);
     try {
       const config = {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ username }),
+        body: JSON.stringify({ user }),
       };
 
-      const fetchLogout = await fetch('/users/logout', config);
-      const response = await fetchLogout.json();
+      const response = await fetch('/users/logout', config);
+      // const loggedOutData = await response.json();
+      // console.log(response);
 
-      if ('data' in response) {
+      if (response.ok) {
         handleLoggedout(false);
       }
     } catch (error) {
@@ -60,17 +62,21 @@ const Chatroom = ({ user, username, handleLoggedout }) => {
   };
 
   useEffect(() => {
+    //fetch log-in for a single user
     fetch(`/users/login/:${username}`)
       .then((res) => res.json())
-      .then((data) => setUsers(data));
+      .then((data) => {
+        console.log('logged-in user =', data);
+        setUsers(data);
+      });
 
+    // can't remove this, otherwise welcome message won't work
     socket.emit('loggedIn', { username });
 
     socket.on('message', (msg) => {
       setMessages((messages) => [...messages, msg]);
     });
 
-    //ok
     socket.on('new-login', ({ activeUsers }) => {
       setUsers(activeUsers);
     });
