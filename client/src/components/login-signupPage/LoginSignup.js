@@ -1,15 +1,20 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Container, Card, Form, Button, Modal } from 'react-bootstrap';
 import './LoginSignup.css';
 import { FaComments } from 'react-icons/fa';
 import SignUp from './SignUp';
 
-const LoginSignup = ({ onUserSubmit, onUsernameSubmit, handleLoggedin }) => {
+const LoginSignup = ({
+  onUserSubmit,
+  onUsernameSubmit,
+  handleLoggedin,
+  getAccessToken,
+}) => {
   const usernameRef = useRef();
   const passwordRef = useRef();
   const [modalOpen, setModalOpen] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
-  const [accessToken, setAccessToken] = useState('');
+  //const [accessToken, setAccessToken] = useState('');
 
   const closeModal = () => {
     setModalOpen(false);
@@ -39,7 +44,7 @@ const LoginSignup = ({ onUserSubmit, onUsernameSubmit, handleLoggedin }) => {
       if (!response.ok) {
         setErrorMsg(loginData.error.message);
       } else {
-        setAccessToken(loginData.token);
+        getAccessToken(loginData.token);
         onUserSubmit(loginData);
         onUsernameSubmit(usernameRef.current.value);
         handleLoggedin(true);

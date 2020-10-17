@@ -1,12 +1,9 @@
-// to add welcome user
-// to add user has join
-
 require('dotenv').config();
 
 const path = require('path');
 const bcrypt = require('bcrypt');
 const formatMessage = require('./utils/message');
-const { userJoin, getCurrentUser, userLeave } = require('./utils/users');
+const { userJoin, userLeave } = require('./utils/users');
 
 const express = require('express');
 const app = express();
@@ -24,7 +21,6 @@ app.use(express.static(path.join(__dirname, 'client/build')));
 
 const registeredUsers = [];
 const activeUsers = [];
-const messages = [];
 
 io.on('connection', (socket) => {
   //console.log(socket.id);

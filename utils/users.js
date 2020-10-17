@@ -9,11 +9,6 @@ function userJoin(id, username) {
   return user;
 }
 
-// Get current user
-function getCurrentUser(id) {
-  return users.find((user) => user.id === id);
-}
-
 // user leaves
 function userLeave(id) {
   const index = users.findIndex((user) => user.id === id);
@@ -25,6 +20,5 @@ function userLeave(id) {
 
 module.exports = {
   userJoin,
-  getCurrentUser,
   userLeave,
 };

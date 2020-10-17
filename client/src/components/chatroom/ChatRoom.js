@@ -8,10 +8,11 @@ import Message from './Message';
 
 const socket = io('http://localhost:5000/');
 
-const Chatroom = ({ user, username, handleLoggedout }) => {
+const Chatroom = ({ user, username, handleLoggedIn, accessToken }) => {
   const [messages, setMessages] = useState([]);
   const [msgInput, setMsgInput] = useState('');
   const [users, setUsers] = useState([]);
+  const [savedToken, setSavedToken] = useState([]);
 
   const handleClick = async (msgInput) => {
     if (!msgInput) return;
@@ -24,7 +25,7 @@ const Chatroom = ({ user, username, handleLoggedout }) => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${user.token}`,
+          Authorization: `Bearer ${user.token || savedToken}`,
         },
         body: JSON.stringify({ user, message }),
       };
@@ -54,7 +55,7 @@ const Chatroom = ({ user, username, handleLoggedout }) => {
       // console.log(response);
 
       if (response.ok) {
-        handleLoggedout(false);
+        handleLoggedIn(false);
       }
     } catch (error) {
       console.log(error);
@@ -84,7 +85,24 @@ const Chatroom = ({ user, username, handleLoggedout }) => {
     socket.on('user-leave', ({ activeUsers }) => {
       setUsers(activeUsers);
     });
+
+    const existingAccessToken = localStorage.getItem('accessToken');
+
+    if (existingAccessToken) {
+      setSavedToken(JSON.parse(existingAccessToken));
+      console.log(savedToken);
+      handleLoggedIn(true);
+    } else {
+      localStorage.setItem('accessToken', JSON.stringify(accessToken));
+      setSavedToken(JSON.parse(localStorage.getItem('accessToken')));
+      console.log(savedToken);
+      handleLoggedIn(true);
+    }
   }, []);
+
+  // if (user.token != null) {
+  //   stayLoggedIn(true);
+  // }
 
   const displayMsgs = messages.map((msg, index) => (
     <Message key={index} msg={msg} currentUser={username} />

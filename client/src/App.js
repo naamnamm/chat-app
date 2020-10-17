@@ -10,19 +10,22 @@ const App = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [user, setUser] = useState([]);
   const [username, setUsername] = useState([]);
+  const [accessToken, setAccessToken] = useState('');
 
   const displayPage =
     isLoggedIn === true ? (
       <ChatRoom
         username={username}
         user={user}
-        handleLoggedout={setIsLoggedIn}
+        handleLoggedIn={setIsLoggedIn}
+        accessToken={accessToken}
       />
     ) : (
       <LoginSignup
         onUserSubmit={setUser}
         onUsernameSubmit={setUsername}
         handleLoggedin={setIsLoggedIn}
+        getAccessToken={setAccessToken}
       />
     );
 
