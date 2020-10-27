@@ -8,6 +8,8 @@ const { userJoin, userLeave } = require('./utils/users');
 const express = require('express');
 const app = express();
 const jwt = require('jsonwebtoken');
+const pool = require('./database/db');
+const cors = require('cors');
 
 const http = require('http');
 const server = http.createServer(app);
@@ -16,8 +18,15 @@ const io = require('socket.io')(server);
 const port = process.env.PORT || 5000;
 
 app.use(express.json());
+app.use(cors());
 
 app.use(express.static(path.join(__dirname, 'client/build')));
+
+// Routes
+
+//create user
+
+//delete user
 
 const registeredUsers = [];
 const activeUsers = [];
@@ -41,25 +50,6 @@ io.on('connection', (socket) => {
       formatMessage('chatbot', `${user.username} has join the chat`)
     );
   });
-
-  //1. Runs when client close out of the browser
-  socket.on('disconnect', () => {
-    const user = userLeave(socket.id);
-
-    if (user) {
-      io.emit(
-        'message',
-        formatMessage('chatbot', `${user.username} has left the chat`)
-      );
-
-      const index = activeUsers.findIndex((u) => u.username === user.username);
-
-      if (index !== -1) {
-        activeUsers.splice(index, 1);
-        io.emit('user-leave', { activeUsers });
-      }
-    }
-  });
 });
 
 // fetch route in the chatroom to get username
@@ -80,7 +70,8 @@ const authenticateToken = (req, res, next) => {
   if (token == null) return res.sendStatus(401);
 
   jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
-    if (err) return res.sendStatus(403);
+    if (err)
+      return res.status(403).send({ message: 'Invalid or expired token' });
     req.user = user;
     next();
   });
@@ -140,7 +131,9 @@ app.post('/users/login', async (req, res) => {
           userid: usernameMatch.userid,
           username: usernameMatch.username,
         };
-        const token = jwt.sign(payload, process.env.ACCESS_TOKEN_SECRET);
+        const token = jwt.sign(payload, process.env.ACCESS_TOKEN_SECRET, {
+          expiresIn: '10h',
+        });
 
         io.emit('new-login', { activeUsers });
         res.status(201).send({
@@ -166,28 +159,28 @@ app.post('/users/login', async (req, res) => {
 });
 
 app.post('/users/signup', async (req, res) => {
-  const userMatch = registeredUsers.find(
-    (user) => user.username === req.body.username
-  );
-
   try {
-    if (!userMatch) {
+    const { username, password } = req.body;
+    const userMatch = await pool.query(
+      'SELECT * FROM users WHERE user_name = $1',
+      [username]
+    );
+
+    if (userMatch.rows.length > 0) {
+      return res.status(401).json('User already exist!');
+    } else {
       const saltRounds = await bcrypt.genSalt();
-      const passHash = await bcrypt.hash(req.body.password, saltRounds);
-      const newUser = {
-        userid: Date.now(),
-        username: req.body.username,
-        password: passHash,
-      };
-      console.log('new sign-up user =', newUser);
-      registeredUsers.push(newUser);
+      const passHash = await bcrypt.hash(password, saltRounds);
+      const newUser = await pool.query(
+        'INSERT INTO users (user_name, user_password) VALUES ($1, $2) RETURNING *',
+        [username, passHash]
+      );
+      console.log(newUser);
+
+      // res.json(newUser);
       res
         .status(201)
         .send({ success: { code: 201, message: 'successfully signed up' } });
-    } else {
-      res
-        .status(401)
-        .send({ error: { code: 401, message: 'Username already exists' } });
     }
   } catch (error) {
     console.log(error);
@@ -209,6 +202,15 @@ app.post('/users/logout', (req, res) => {
       formatMessage('chatbot', `${logoutUser.username} has left the chat`)
     );
     res.status(201).send({ activeUsers });
+  }
+});
+
+app.get('/users/verify-token', authenticateToken, (req, res) => {
+  try {
+    res.json(true);
+  } catch (error) {
+    console.error(err.message);
+    res.status(403).send('Invalid or Expired token');
   }
 });
 
@@ -244,3 +246,29 @@ server.listen(port, () => console.log(`server started on port ${port}`));
 //   }
 //   res.send([]);
 // });
+//1. Runs when client close out of the browser
+// socket.on('disconnect', () => {
+//   const user = userLeave(socket.id);
+
+//   if (user) {
+//     io.emit(
+//       'message',
+//       formatMessage('chatbot', `${user.username} has left the chat`)
+//     );
+
+//     const index = activeUsers.findIndex((u) => u.username === user.username);
+
+//     if (index !== -1) {
+//       activeUsers.splice(index, 1);
+//       io.emit('user-leave', { activeUsers });
+//     }
+//   }
+// });
+
+// try {
+//   const { username, password } = req.body;
+//   const userMatch = await pool.query(
+//     'SELECT * FROM users WHERE user_name = $1',
+//     [username]
+//   );
+//   res.json(userMatch.rows);

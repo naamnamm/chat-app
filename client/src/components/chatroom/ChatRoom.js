@@ -8,11 +8,11 @@ import Message from './Message';
 
 const socket = io('http://localhost:5000/');
 
-const Chatroom = ({ user, username, handleLoggedIn, accessToken }) => {
+const Chatroom = ({ user, username, handleLoggedIn, accessToken, setAuth }) => {
   const [messages, setMessages] = useState([]);
   const [msgInput, setMsgInput] = useState('');
   const [users, setUsers] = useState([]);
-  const [savedToken, setSavedToken] = useState([]);
+  //const [savedToken, setSavedToken] = useState([]);
 
   const handleClick = async (msgInput) => {
     if (!msgInput) return;
@@ -25,12 +25,16 @@ const Chatroom = ({ user, username, handleLoggedIn, accessToken }) => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${user.token || savedToken}`,
+          Authorization: `Bearer ${user.token}`,
         },
         body: JSON.stringify({ user, message }),
       };
       const response = await fetch('/users/post', config);
       const msgData = await response.json();
+
+      if (!response.ok) {
+        handleLoggedIn(false);
+      }
       console.log('response from a server =', msgData);
     } catch (error) {
       console.log(error);
@@ -56,6 +60,8 @@ const Chatroom = ({ user, username, handleLoggedIn, accessToken }) => {
 
       if (response.ok) {
         handleLoggedIn(false);
+        setAuth(false);
+        localStorage.removeItem('accessToken');
       }
     } catch (error) {
       console.log(error);
@@ -85,24 +91,7 @@ const Chatroom = ({ user, username, handleLoggedIn, accessToken }) => {
     socket.on('user-leave', ({ activeUsers }) => {
       setUsers(activeUsers);
     });
-
-    const existingAccessToken = localStorage.getItem('accessToken');
-
-    if (existingAccessToken) {
-      setSavedToken(JSON.parse(existingAccessToken));
-      console.log(savedToken);
-      handleLoggedIn(true);
-    } else {
-      localStorage.setItem('accessToken', JSON.stringify(accessToken));
-      setSavedToken(JSON.parse(localStorage.getItem('accessToken')));
-      console.log(savedToken);
-      handleLoggedIn(true);
-    }
   }, []);
-
-  // if (user.token != null) {
-  //   stayLoggedIn(true);
-  // }
 
   const displayMsgs = messages.map((msg, index) => (
     <Message key={index} msg={msg} currentUser={username} />

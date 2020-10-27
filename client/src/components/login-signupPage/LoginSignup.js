@@ -9,6 +9,7 @@ const LoginSignup = ({
   onUsernameSubmit,
   handleLoggedin,
   getAccessToken,
+  setAuth,
 }) => {
   const usernameRef = useRef();
   const passwordRef = useRef();
@@ -44,10 +45,12 @@ const LoginSignup = ({
       if (!response.ok) {
         setErrorMsg(loginData.error.message);
       } else {
-        getAccessToken(loginData.token);
+        localStorage.setItem('accessToken', JSON.stringify(loginData.token));
+        //getAccessToken(loginData.token);
         onUserSubmit(loginData);
         onUsernameSubmit(usernameRef.current.value);
         handleLoggedin(true);
+        setAuth(true);
       }
     } catch (error) {
       console.log(error);
