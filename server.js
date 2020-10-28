@@ -214,6 +214,10 @@ app.get('/users/verify-token', authenticateToken, (req, res) => {
   }
 });
 
+app.get('/*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'client/build', 'index.html'));
+});
+
 server.listen(port, () => console.log(`server started on port ${port}`));
 
 // app.get('/users', (req, res) => {
