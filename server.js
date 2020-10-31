@@ -17,19 +17,13 @@ const io = require('socket.io')(server);
 
 const port = process.env.PORT || 5000;
 
-app.use(express.json());
+app.use(express.json()); 
 app.use(cors());
 
 app.use(express.static(path.join(__dirname, 'client/build')));
 
-// Routes
-
-//create user
-
-//delete user
-
 const registeredUsers = [];
-const activeUsers = [];
+const activeUsers = []; 
 
 io.on('connection', (socket) => {
   //console.log(socket.id);
@@ -220,59 +214,4 @@ app.get('/*', (req, res) => {
 
 server.listen(port, () => console.log(`server started on port ${port}`));
 
-// app.get('/users', (req, res) => {
-//   res.json(users);
-// });
-// registeredUsers.length >= 1
-// ? registeredUsers.forEach((u) => {
-//     console.log(u);
-//     console.log(username, password);
-//     if (u.username === username && u.password === password) {
-//       activeUsers.push(user);
 
-//       io.emit('new-login', { activeUsers });
-
-//       res.send();
-//     } else {
-//       res.status(403).send({
-//         error: { code: 403, message: 'Invalid Username or Password' },
-//       });
-//     }
-//   })
-// : res.status(403).send({
-//     error: { code: 403, message: 'Invalid Username or Password' },
-//   });
-// }
-
-// app.get('/users', (req, res) => {
-//   if (req.query.active === 'true') {
-//     res.send(activeUsers);
-//   }
-//   res.send([]);
-// });
-//1. Runs when client close out of the browser
-// socket.on('disconnect', () => {
-//   const user = userLeave(socket.id);
-
-//   if (user) {
-//     io.emit(
-//       'message',
-//       formatMessage('chatbot', `${user.username} has left the chat`)
-//     );
-
-//     const index = activeUsers.findIndex((u) => u.username === user.username);
-
-//     if (index !== -1) {
-//       activeUsers.splice(index, 1);
-//       io.emit('user-leave', { activeUsers });
-//     }
-//   }
-// });
-
-// try {
-//   const { username, password } = req.body;
-//   const userMatch = await pool.query(
-//     'SELECT * FROM users WHERE user_name = $1',
-//     [username]
-//   );
-//   res.json(userMatch.rows);
