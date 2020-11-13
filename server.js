@@ -88,55 +88,40 @@ app.post('/users/login', async (req, res) => {
   try {
     const { username, password } = req.body;
 
-    //to prevent user from logging in twice
-    const alreadyLoggedIn = activeUsers.some(
-      (user) => user.username === username
+    const usernameMatch = await pool.query(
+      'SELECT * FROM users WHERE user_name = $1',
+      [username]
     );
-
-    if (alreadyLoggedIn) {
-      res.status(403).send({
-        error: { code: 403, message: 'You are already logged in.' },
-      });
-      return;
-    }
-
-    const usernameMatch = registeredUsers.find((user) => {
-      return user.username === username;
-    });
 
     if (usernameMatch) {
       const passwordMatch = await bcrypt.compare(
         password,
-        usernameMatch.password
+        usernameMatch.rows[0].user_password
       );
       if (passwordMatch) {
-        const loginUser = {
-          userid: usernameMatch.userid,
-          username,
-          // password: usernameMatch.password,
-        };
-        console.log('login user =', loginUser);
-        activeUsers.push(loginUser);
-        console.log('active users =', activeUsers);
+        //alter last_active_at to current time
+        await pool.query('UPDATE users SET last_active_at = $1 WHERE user_name = $2', [Date.now(), username], (err, res) => {
+          console.log(err, res);
+          pool.end();
+        });
 
         //once authentication process is completed
         //now we serialize user with webtoken
         const payload = {
-          userid: usernameMatch.userid,
-          username: usernameMatch.username,
+          user_id: usernameMatch.rows[0].user_id
         };
         const token = jwt.sign(payload, process.env.ACCESS_TOKEN_SECRET, {
           expiresIn: '10h',
         });
 
         io.emit('new-login', { activeUsers });
+
         res.status(201).send({
           token,
-          userid: usernameMatch.userid,
-          username: usernameMatch.username,
+          userid: usernameMatch.rows[0].user_id,
+          username: usernameMatch.rows[0].user_name,
         });
 
-        //res.send({ data: activeUsers, token });
       } else {
         res.status(403).send({
           error: { code: 403, message: 'Invalid Password' },
@@ -152,7 +137,7 @@ app.post('/users/login', async (req, res) => {
   }
 });
 
-app.post('/users/signup', async (req, res) => {
+app.post('/users/signup', async (req, res) => {9
   try {
     const { username, password } = req.body;
     const userMatch = await pool.query(
@@ -169,7 +154,7 @@ app.post('/users/signup', async (req, res) => {
         'INSERT INTO users (user_name, user_password) VALUES ($1, $2) RETURNING *',
         [username, passHash]
       );
-      console.log(newUser);
+      console.log(newUser.rows[0]);
 
       // res.json(newUser);
       res
@@ -215,3 +200,70 @@ app.get('/*', (req, res) => {
 server.listen(port, () => console.log(`server started on port ${port}`));
 
 
+// app.post('/users/login', async (req, res) => {
+//   try {
+//     const { username, password } = req.body;
+
+//     //to prevent user from logging in twice
+//     const alreadyLoggedIn = activeUsers.some(
+//       (user) => user.username === username
+//     );
+
+//     if (alreadyLoggedIn) {
+//       res.status(403).send({
+//         error: { code: 403, message: 'You are already logged in.' },
+//       });
+//       return;
+//     }
+
+//     const usernameMatch = registeredUsers.find((user) => {
+//       return user.username === username;
+//     });
+
+//     if (usernameMatch) {
+//       const passwordMatch = await bcrypt.compare(
+//         password,
+//         usernameMatch.password
+//       );
+//       if (passwordMatch) {
+//         const loginUser = {
+//           userid: usernameMatch.userid,
+//           username,
+//           // password: usernameMatch.password,
+//         };
+//         console.log('login user =', loginUser);
+//         activeUsers.push(loginUser);
+//         console.log('active users =', activeUsers);
+
+//         //once authentication process is completed
+//         //now we serialize user with webtoken
+//         const payload = {
+//           userid: usernameMatch.userid,
+//           username: usernameMatch.username,
+//         };
+//         const token = jwt.sign(payload, process.env.ACCESS_TOKEN_SECRET, {
+//           expiresIn: '10h',
+//         });
+
+//         io.emit('new-login', { activeUsers });
+//         res.status(201).send({
+//           token,
+//           userid: usernameMatch.userid,
+//           username: usernameMatch.username,
+//         });
+
+//         //res.send({ data: activeUsers, token });
+//       } else {
+//         res.status(403).send({
+//           error: { code: 403, message: 'Invalid Password' },
+//         });
+//       }
+//     } else {
+//       res.status(403).send({
+//         error: { code: 403, message: 'Invalid Username' },
+//       });
+//     }
+//   } catch (error) {
+//     console.log(error);
+//   }
+// });
