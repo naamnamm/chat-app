@@ -36,13 +36,19 @@ const App = () => {
 
       const isVerified = await response.json();
 
-      isVerified === true
-        ? setIsAuthenticated(true)
-        : setIsAuthenticated(false);
+      if (isVerified === true) {
+        setIsAuthenticated(true)
+        fetch('/users/login/activeusers').then((res) => res.json()).then(data => console.log(data))
+      } else {
+        setIsAuthenticated(false);
+      }
+        
     } catch (err) {
       console.error(err.message);
     }
   };
+
+
 
   useEffect(() => {
     verifyToken();

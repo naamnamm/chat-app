@@ -69,12 +69,13 @@ const Chatroom = ({ user, username, handleLoggedIn, accessToken, setAuth }) => {
   };
 
   useEffect(() => {
-    //fetch log-in for a single user
-    fetch(`/users/login/:${username}`)
+    fetch('/users/login/activeusers')
       .then((res) => res.json())
       .then((data) => {
-        console.log('logged-in user =', data);
-        setUsers(data);
+        console.log('active users =', data);
+        console.log(data)
+        setUsers(data.rows);
+        console.log(users)
       });
 
     // can't remove this, otherwise welcome message won't work
@@ -99,7 +100,7 @@ const Chatroom = ({ user, username, handleLoggedIn, accessToken, setAuth }) => {
 
   const displayActiveUsers =
     users.length >= 1
-      ? users.map((user, index) => <li key={index}> {user.username}</li>)
+      ? users.map((user, index) => <li key={index}> {user.user_name}</li>)
       : null;
 
   return (

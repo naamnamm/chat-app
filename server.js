@@ -46,14 +46,17 @@ io.on('connection', (socket) => {
   });
 });
 
-// fetch route in the chatroom to get username
-app.get('/users/login/:username', (req, res) => {
-  //console.log(req.header);
-  const name = req.params.username.slice(1);
-  const found = activeUsers.find((u) => u.username === name);
+// fetch route in the chatroom to get all active users
+app.get('/users/login/activeusers', async (req, res) => {
 
-  if (found) {
-    res.send(activeUsers);
+  const activeusers = await pool.query(
+    "SELECT * FROM users WHERE last_active_at >= NOW() - interval '12 hour'"
+  );
+
+  console.log(activeUsers)
+
+  if (activeusers) {
+    res.send(activeusers);
   }
 });
 
@@ -100,12 +103,11 @@ app.post('/users/login', async (req, res) => {
       );
       if (passwordMatch) {
         //alter last_active_at to current time
-        await pool.query('UPDATE users SET last_active_at = $1 WHERE user_name = $2', [Date.now(), username], (err, res) => {
-          console.log(err, res);
-          pool.end();
+        await pool.query('UPDATE users SET last_active_at = $1 WHERE user_name = $2', [new Date(), username], (err, res) => {
+          //console.log(err, res);
+          //pool.end();
         });
 
-        //once authentication process is completed
         //now we serialize user with webtoken
         const payload = {
           user_id: usernameMatch.rows[0].user_id
@@ -265,5 +267,29 @@ server.listen(port, () => console.log(`server started on port ${port}`));
 //     }
 //   } catch (error) {
 //     console.log(error);
+//   }
+// });
+
+// fetch route in the chatroom to get username
+// app.get('/users/login/:username', async (req, res) => {
+  //console.log(req.header);
+  // const loginUser = req.params.username.slice(1);
+
+  // const usernameMatch = await pool.query(
+  //   "SELECT * FROM users WHERE user_name = $1",
+  //   [loginUser]
+  // );
+
+  // const activeusers = await pool.query(
+  //   "SELECT * FROM users WHERE last_active_at >= NOW() - interval '12 hour'"
+  // );
+  
+  // console.log(activeusers.rows)
+  // console.log(loginUser)
+  // console.log(usernameMatch.rows)
+  //const found = activeUsers.find((u) => u.username === loginUser);
+
+//   if (activeusers) {
+//     res.send(activeusers.rows);
 //   }
 // });
