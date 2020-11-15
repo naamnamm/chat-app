@@ -51,7 +51,7 @@ const Chatroom = ({ user, username, handleLoggedIn, accessToken, setAuth }) => {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ user }),
+        body: JSON.stringify({ username }),
       };
 
       const response = await fetch('/users/logout', config);
@@ -78,9 +78,6 @@ const Chatroom = ({ user, username, handleLoggedIn, accessToken, setAuth }) => {
         console.log(users)
       });
 
-    // can't remove this, otherwise welcome message won't work
-    socket.emit('loggedIn', { username });
-
     socket.on('message', (msg) => {
       setMessages((messages) => [...messages, msg]);
     });
@@ -104,6 +101,7 @@ const Chatroom = ({ user, username, handleLoggedIn, accessToken, setAuth }) => {
       : null;
 
   return (
+    <> 
     <div className='chat-container mx-auto mt-5'>
       <div className='header'>
         <Navbar>
@@ -148,6 +146,8 @@ const Chatroom = ({ user, username, handleLoggedIn, accessToken, setAuth }) => {
         </InputGroup>
       </Form>
     </div>
+      <p>{username}</p>
+    </>
   );
 };
 
