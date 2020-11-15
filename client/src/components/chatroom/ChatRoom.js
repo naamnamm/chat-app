@@ -69,7 +69,7 @@ const Chatroom = ({ user, username, handleLoggedIn, accessToken, setAuth }) => {
   };
 
   useEffect(() => {
-    fetch('/users/login/activeusers')
+    fetch('/users/getActiveUsers')
       .then((res) => res.json())
       .then((data) => {
         console.log('active users =', data);
@@ -117,10 +117,20 @@ const Chatroom = ({ user, username, handleLoggedIn, accessToken, setAuth }) => {
 
       <div className='main d-flex'>
         <div className='chat-sidebar'>
+          <div className='mt-2'>
+            Channels
+          </div>
+          <ul className='pr-2'>
+          <Button className='mt-2 mb-2'> General </Button>
+          <Button> Questions and Answers </Button>
+          
+          </ul>
+
           <div>
             <FaUsers /> Active Users
           </div>
           <ul>{displayActiveUsers}</ul>
+          
         </div>
 
         <div className='chat-main'>

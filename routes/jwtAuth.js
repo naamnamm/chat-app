@@ -3,7 +3,6 @@ const router = express.Router()
 
 const bcrypt = require('bcrypt');
 const formatMessage = require('../utils/message');
-const { userJoin, userLeave } = require('../utils/users');
 const jwt = require('jsonwebtoken');
 const pool = require('../database/db');
 
@@ -24,7 +23,7 @@ const authenticateToken = (req, res, next) => {
 };
 
 // verify token when user posts
-router.post('/users/post', authenticateToken, (req, res) => {
+router.post('/post', authenticateToken, (req, res) => {
   console.log('user post:', req.body, req.user);
   const { user, message } = req.body;
 
@@ -93,7 +92,7 @@ router.post('/login', async (req, res) => {
 });
 
 // fetch route in the chatroom to get all active users
-router.get('/login/activeusers', async (req, res) => {
+router.get('/getActiveUsers', async (req, res) => {
 
   const activeUsers = await pool.query(
     "SELECT * FROM users WHERE last_active_at >= NOW() - interval '12 hour'"
