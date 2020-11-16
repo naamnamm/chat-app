@@ -48,8 +48,6 @@ const App = () => {
     }
   };
 
-
-
   useEffect(() => {
     verifyToken();
   }, []);

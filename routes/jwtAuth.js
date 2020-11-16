@@ -12,6 +12,8 @@ const authenticateToken = (req, res, next) => {
   const authHeader = req.headers['authorization'];
   const token = authHeader && authHeader.split(' ')[1];
 
+  console.log('user-in-auth', req.user)
+
   if (token == null) return res.sendStatus(401);
 
   jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
@@ -22,16 +24,45 @@ const authenticateToken = (req, res, next) => {
   });
 };
 
+router.get('/channel/:channel', async (req, res) => {
+  console.log(req.params)
+  const channel = req.params.channel.slice(1);
+  console.log(channel)
+  
+  const getChannel = await pool.query(
+    "SELECT * FROM channels WHERE channel_name = $1", [channel]
+  );
+  
+
+  console.log(getChannel.rows[0].channel_id)
+
+  // if (activeUsers) {
+  //   res.send(activeUsers);
+  // }
+});
+
 // verify token when user posts
-router.post('/post', authenticateToken, (req, res) => {
+router.post('/post', authenticateToken, async (req, res) => {
   console.log('user post:', req.body, req.user);
-  const { user, message } = req.body;
+  const { user, message, channel } = req.body;
 
-  req.io.emit('message', formatMessage(user.username, message));
-  //io.emit('message', { messages });
+  console.log(`userid = ${req.user.user_id}` )
+  console.log(`message = ${message}` )
+  console.log(`channel = ${channel}` )
+  
+  const getChannel = await pool.query(
+    "SELECT * FROM channels WHERE channel_name = $1", [channel]
+  );
 
-  res.status(201).send({ message: 'successfully posted' });
-  //res.json(req.body);
+  //insert new message with user ID, channel ID and message into message table
+  const msgpost = await pool.query('INSERT INTO messages (user_id, channel_id, message_text) VALUES ($1, $2, $3) RETURNING *',
+  [req.user.user_id, getChannel.rows[0].channel_id, message]) 
+
+  console.log(msgpost.rows[0])
+  
+  req.io.emit('message', formatMessage(getChannel.rows[0].channel_name, req.user.user_name, message));
+  
+  res.status(201).send({username: req.user.user_name, channel: getChannel.rows[0].channel_name, message})
 });
 
 // login route & sign token
@@ -58,10 +89,11 @@ router.post('/login', async (req, res) => {
 
         //now we serialize user with webtoken
         const payload = {
-          user_id: usernameMatch.rows[0].user_id
+          user_id: usernameMatch.rows[0].user_id,
+          user_name: usernameMatch.rows[0].user_name
         };
         const token = jwt.sign(payload, process.env.ACCESS_TOKEN_SECRET, {
-          expiresIn: '10h',
+          expiresIn: '12h',
         });
 
         // const activeUsers = await pool.query(

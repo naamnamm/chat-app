@@ -12,6 +12,7 @@ const Chatroom = ({ user, username, handleLoggedIn, accessToken, setAuth }) => {
   const [messages, setMessages] = useState([]);
   const [msgInput, setMsgInput] = useState('');
   const [users, setUsers] = useState([]);
+  const [channel, setChannel] = useState('general');
   //const [savedToken, setSavedToken] = useState([]);
 
   const handleClick = async (msgInput) => {
@@ -19,21 +20,25 @@ const Chatroom = ({ user, username, handleLoggedIn, accessToken, setAuth }) => {
     console.log('post user =', user);
     //socket.emit('chatMsg', msgInput);
 
+    //console.log('user', user)
+
     try {
       const message = msgInput;
       const config = {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${user.token}`,
+          Authorization: `Bearer ${JSON.parse(
+            localStorage.getItem('accessToken')
+          )}`,
         },
-        body: JSON.stringify({ user, message }),
+        body: JSON.stringify({ user, message, channel }),
       };
       const response = await fetch('/users/post', config);
       const msgData = await response.json();
 
-      if (!response.ok) {
-        handleLoggedIn(false);
+      if (response.ok) {
+        
       }
       console.log('response from a server =', msgData);
     } catch (error) {
@@ -68,6 +73,16 @@ const Chatroom = ({ user, username, handleLoggedIn, accessToken, setAuth }) => {
     }
   };
 
+  const handleChannels = async () => {
+    const response = await fetch(`/users/channel/:${channel}`)
+    const data = await response.json()
+    console.log(data)
+  }
+
+  useEffect(() => {
+    handleChannels();
+  }, [channel])
+
   useEffect(() => {
     fetch('/users/getActiveUsers')
       .then((res) => res.json())
@@ -77,6 +92,8 @@ const Chatroom = ({ user, username, handleLoggedIn, accessToken, setAuth }) => {
         setUsers(data.rows);
         console.log(users)
       });
+
+    handleChannels();
 
     socket.on('message', (msg) => {
       setMessages((messages) => [...messages, msg]);
@@ -119,10 +136,10 @@ const Chatroom = ({ user, username, handleLoggedIn, accessToken, setAuth }) => {
         <div className='chat-sidebar'>
           <div className='mt-2'>
             Channels
-          </div>
+          </div> 
           <ul className='pr-2'>
           <Button className='mt-2 mb-2'> General </Button>
-          <Button> Questions and Answers </Button>
+          <Button onClick={() => setChannel('funStuff')}> Fun Stuff </Button>
           
           </ul>
 
@@ -157,6 +174,7 @@ const Chatroom = ({ user, username, handleLoggedIn, accessToken, setAuth }) => {
       </Form>
     </div>
       <p>{username}</p>
+      <p>{user.username}</p>
     </>
   );
 };
