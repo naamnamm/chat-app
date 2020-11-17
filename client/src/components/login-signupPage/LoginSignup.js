@@ -6,16 +6,12 @@ import SignUp from './SignUp';
 
 const LoginSignup = ({
   onUserSubmit,
-  onUsernameSubmit,
-  handleLoggedin,
-  getAccessToken,
   setAuth,
 }) => {
   const usernameRef = useRef();
   const passwordRef = useRef();
   const [modalOpen, setModalOpen] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
-  //const [accessToken, setAccessToken] = useState('');
 
   const closeModal = () => {
     setModalOpen(false);
@@ -46,10 +42,7 @@ const LoginSignup = ({
         setErrorMsg(loginData.error.message);
       } else {
         localStorage.setItem('accessToken', JSON.stringify(loginData.token));
-        //getAccessToken(loginData.token);
         onUserSubmit(loginData);
-        onUsernameSubmit(usernameRef.current.value);
-        handleLoggedin(true);
         setAuth(true);
       }
     } catch (error) {

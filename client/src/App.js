@@ -13,10 +13,7 @@ import {
 const socket = io('http://localhost:5000/');
 
 const App = () => {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [user, setUser] = useState([]);
-  const [username, setUsername] = useState([]);
-  const [accessToken, setAccessToken] = useState('');
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   const setAuth = (boolean) => {
@@ -38,7 +35,10 @@ const App = () => {
 
       if (isVerified === true) {
         setIsAuthenticated(true)
-        fetch('/users/login/activeusers').then((res) => res.json()).then(data => console.log(data))
+        console.log(isAuthenticated)
+        await fetch('/users/login/activeusers')
+        .then((res) => res.json())
+        .then(data => console.log(data))
       } else {
         setIsAuthenticated(false);
       }
@@ -65,9 +65,6 @@ const App = () => {
                   <LoginSignup
                     {...props}
                     onUserSubmit={setUser}
-                    onUsernameSubmit={setUsername}
-                    handleLoggedin={setIsLoggedIn}
-                    getAccessToken={setAccessToken}
                     setAuth={setAuth}
                   />
                 ) : (
@@ -83,10 +80,7 @@ const App = () => {
                 isAuthenticated ? (
                   <ChatRoom
                     {...props}
-                    username={username}
                     user={user}
-                    handleLoggedIn={setIsLoggedIn}
-                    accessToken={accessToken}
                     setAuth={setAuth}
                   />
                 ) : (

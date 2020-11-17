@@ -8,18 +8,16 @@ import Message from './Message';
 
 const socket = io('http://localhost:5000/');
 
-const Chatroom = ({ user, username, handleLoggedIn, accessToken, setAuth }) => {
+const Chatroom = ({ user, setAuth }) => {
   const [messages, setMessages] = useState([]);
   const [msgInput, setMsgInput] = useState('');
   const [users, setUsers] = useState([]);
   const [channel, setChannel] = useState('general');
-  //const [savedToken, setSavedToken] = useState([]);
 
   const handleClick = async (msgInput) => {
     if (!msgInput) return;
     console.log('post user =', user);
     //socket.emit('chatMsg', msgInput);
-
     //console.log('user', user)
 
     try {
@@ -50,13 +48,14 @@ const Chatroom = ({ user, username, handleLoggedIn, accessToken, setAuth }) => {
 
   const setLoggedOut = async () => {
     console.log('test loggedout =', user);
+
     try {
       const config = {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ username }),
+        body: JSON.stringify({ username: user.username }),
       };
 
       const response = await fetch('/users/logout', config);
@@ -64,7 +63,6 @@ const Chatroom = ({ user, username, handleLoggedIn, accessToken, setAuth }) => {
       // console.log(response);
 
       if (response.ok) {
-        handleLoggedIn(false);
         setAuth(false);
         localStorage.removeItem('accessToken');
       }
@@ -77,6 +75,7 @@ const Chatroom = ({ user, username, handleLoggedIn, accessToken, setAuth }) => {
     const response = await fetch(`/users/channel/:${channel}`)
     const data = await response.json()
     console.log(data)
+    setMessages(data)
   }
 
   useEffect(() => {
@@ -93,7 +92,7 @@ const Chatroom = ({ user, username, handleLoggedIn, accessToken, setAuth }) => {
         console.log(users)
       });
 
-    handleChannels();
+    //handleChannels();
 
     socket.on('message', (msg) => {
       setMessages((messages) => [...messages, msg]);
@@ -108,9 +107,11 @@ const Chatroom = ({ user, username, handleLoggedIn, accessToken, setAuth }) => {
     });
   }, []);
 
-  const displayMsgs = messages.map((msg, index) => (
-    <Message key={index} msg={msg} currentUser={username} />
-  ));
+  const displayMsgs = messages.map((msg, index) => {
+    //console.log(msg)
+    return <Message key={index} msg={msg} currentUser={user.username} />
+  }
+  );
 
   const displayActiveUsers =
     users.length >= 1
@@ -139,7 +140,7 @@ const Chatroom = ({ user, username, handleLoggedIn, accessToken, setAuth }) => {
           </div> 
           <ul className='pr-2'>
           <Button className='mt-2 mb-2'> General </Button>
-          <Button onClick={() => setChannel('funStuff')}> Fun Stuff </Button>
+          <Button onClick={() => setChannel('funstuff')}> Fun Stuff </Button>
           
           </ul>
 
@@ -173,7 +174,7 @@ const Chatroom = ({ user, username, handleLoggedIn, accessToken, setAuth }) => {
         </InputGroup>
       </Form>
     </div>
-      <p>{username}</p>
+      {/* <p>{username}</p> */}
       <p>{user.username}</p>
     </>
   );

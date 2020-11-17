@@ -38,7 +38,7 @@ CREATE TABLE messages (
   message_text TEXT NOT NULL
 );
 
-
+ALTER TABLE messages ADD COLUMN channel_name TEXT NOT NULL
 
 INSERT INTO users (user_name, user_password) VALUES ('ben', '123');
 

@@ -12,7 +12,7 @@ const authenticateToken = (req, res, next) => {
   const authHeader = req.headers['authorization'];
   const token = authHeader && authHeader.split(' ')[1];
 
-  console.log('user-in-auth', req.user)
+  //console.log('user-in-auth', req.user)
 
   if (token == null) return res.sendStatus(401);
 
@@ -29,16 +29,21 @@ router.get('/channel/:channel', async (req, res) => {
   const channel = req.params.channel.slice(1);
   console.log(channel)
   
-  const getChannel = await pool.query(
-    "SELECT * FROM channels WHERE channel_name = $1", [channel]
-  );
+  // const getChannel = await pool.query(
+  //   "SELECT * FROM channels WHERE channel_name = $1", [channel]
+  // );
+
+  // const channelID = getChannel.rows[0].channel_id
   
+  const getMessages = await pool.query(
+    "SELECT * FROM messages WHERE channel_name = $1", [channel]
+  );
 
-  console.log(getChannel.rows[0].channel_id)
+  console.log(getMessages.rows)
 
-  // if (activeUsers) {
-  //   res.send(activeUsers);
-  // }
+  if (getMessages) {
+    res.send(getMessages.rows);
+  }
 });
 
 // verify token when user posts
@@ -55,8 +60,8 @@ router.post('/post', authenticateToken, async (req, res) => {
   );
 
   //insert new message with user ID, channel ID and message into message table
-  const msgpost = await pool.query('INSERT INTO messages (user_id, channel_id, message_text) VALUES ($1, $2, $3) RETURNING *',
-  [req.user.user_id, getChannel.rows[0].channel_id, message]) 
+  const msgpost = await pool.query('INSERT INTO messages (user_id, channel_id, channel_name, message_text) VALUES ($1, $2, $3, $4) RETURNING *',
+  [req.user.user_id, getChannel.rows[0].channel_id, getChannel.rows[0].channel_name, message]) 
 
   console.log(msgpost.rows[0])
   
@@ -176,14 +181,10 @@ router.post('/logout', async (req, res) => {
     [null, username]
   );
 
-
-
   //send back active users
   const activeUsers = await pool.query(
     "SELECT * FROM users WHERE last_active_at >= NOW() - interval '12 hour'"
   );
-
-
 
   if (activeUsers) {
     res.status(201).send({ activeUsers });
