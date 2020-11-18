@@ -31,14 +31,21 @@ const App = () => {
         },
       });
 
-      const isVerified = await response.json();
-
-      if (isVerified === true) {
+      const data = await response.json();
+      console.log(data)
+      console.log(data.isVerified)
+      debugger;
+      if (data.isVerified === true) {
         setIsAuthenticated(true)
-        console.log(isAuthenticated)
-        await fetch('/users/login/activeusers')
-        .then((res) => res.json())
-        .then(data => console.log(data))
+        //console.log(isAuthenticated)
+        //delete data.isVerified
+        //console.log(data)
+
+        setUser(data)
+        // await fetch('/users/login/activeusers')
+        // .then((res) => res.json())
+        // .then(data => console.log(data))
+        console.log(user)
       } else {
         setIsAuthenticated(false);
       }

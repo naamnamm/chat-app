@@ -33,12 +33,19 @@ CREATE TABLE channels (
 
 CREATE TABLE messages (
   message_id TEXT PRIMARY KEY DEFAULT generate_uid(15),
+  message_text TEXT NOT NULL,
   user_id TEXT NOT NULL,
+  user_name TEXT NOT NULL,
   channel_id TEXT NOT NULL,
-  message_text TEXT NOT NULL
+  channel_name TEXT NOT NULL,
+  post_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-ALTER TABLE messages ADD COLUMN channel_name TEXT NOT NULL
+ALTER TABLE messages ADD COLUMN channel_name TEXT NOT NULL;
+ALTER TABLE messages ADD COLUMN post_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP;
+TRUNCATE messages; 
+DELETE FROM messages;
+DROP TABLE IF EXISTS messages;
 
 INSERT INTO users (user_name, user_password) VALUES ('ben', '123');
 

@@ -107,9 +107,9 @@ const Chatroom = ({ user, setAuth }) => {
     });
   }, []);
 
-  const displayMsgs = messages.map((msg, index) => {
+  const displayMsgs = messages.map(msg => {
     //console.log(msg)
-    return <Message key={index} msg={msg} currentUser={user.username} />
+    return <Message key={msg.message_id} msg={msg} currentUser={user.user_name} />
   }
   );
 

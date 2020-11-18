@@ -25,9 +25,9 @@ const authenticateToken = (req, res, next) => {
 };
 
 router.get('/channel/:channel', async (req, res) => {
-  console.log(req.params)
+  //console.log(req.params)
   const channel = req.params.channel.slice(1);
-  console.log(channel)
+  //console.log(channel)
   
   // const getChannel = await pool.query(
   //   "SELECT * FROM channels WHERE channel_name = $1", [channel]
@@ -39,7 +39,7 @@ router.get('/channel/:channel', async (req, res) => {
     "SELECT * FROM messages WHERE channel_name = $1", [channel]
   );
 
-  console.log(getMessages.rows)
+  //console.log(getMessages.rows)
 
   if (getMessages) {
     res.send(getMessages.rows);
@@ -48,22 +48,22 @@ router.get('/channel/:channel', async (req, res) => {
 
 // verify token when user posts
 router.post('/post', authenticateToken, async (req, res) => {
-  console.log('user post:', req.body, req.user);
+  //console.log('user post:', req.body, req.user);
   const { user, message, channel } = req.body;
 
-  console.log(`userid = ${req.user.user_id}` )
-  console.log(`message = ${message}` )
-  console.log(`channel = ${channel}` )
+  //console.log(`userid = ${req.user.user_id}` )
+  //console.log(`message = ${message}` )
+  //console.log(`channel = ${channel}` )
   
   const getChannel = await pool.query(
     "SELECT * FROM channels WHERE channel_name = $1", [channel]
   );
 
   //insert new message with user ID, channel ID and message into message table
-  const msgpost = await pool.query('INSERT INTO messages (user_id, channel_id, channel_name, message_text) VALUES ($1, $2, $3, $4) RETURNING *',
-  [req.user.user_id, getChannel.rows[0].channel_id, getChannel.rows[0].channel_name, message]) 
+  const msgpost = await pool.query('INSERT INTO messages (message_text, user_id, user_name, channel_id, channel_name) VALUES ($1, $2, $3, $4, $5) RETURNING *',
+  [message, req.user.user_id, req.user.user_name, getChannel.rows[0].channel_id, getChannel.rows[0].channel_name]) 
 
-  console.log(msgpost.rows[0])
+  //console.log(msgpost.rows[0])
   
   req.io.emit('message', formatMessage(getChannel.rows[0].channel_name, req.user.user_name, message));
   
@@ -109,8 +109,8 @@ router.post('/login', async (req, res) => {
 
         res.status(201).send({
           token,
-          userid: usernameMatch.rows[0].user_id,
-          username: usernameMatch.rows[0].user_name,
+          user_id: usernameMatch.rows[0].user_id,
+          user_name: usernameMatch.rows[0].user_name,
         });
 
       } else {
@@ -194,7 +194,9 @@ router.post('/logout', async (req, res) => {
 
 router.get('/verify-token', authenticateToken, (req, res) => {
   try {
-    res.json(true);
+    const data = Object.assign(req.user, {isVerified: true})
+    console.log(req.user)
+    res.json(data);
   } catch (error) {
     //console.error(err.message);
     res.status(403).send('Invalid or Expired token');
