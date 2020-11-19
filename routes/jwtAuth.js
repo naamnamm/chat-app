@@ -101,11 +101,13 @@ router.post('/login', async (req, res) => {
           expiresIn: '12h',
         });
 
-        // const activeUsers = await pool.query(
-        //   "SELECT * FROM users WHERE last_active_at >= NOW() - interval '12 hour'"
-        // );
+        const activeUsers = await pool.query(
+          "SELECT * FROM users WHERE last_active_at >= NOW() - interval '12 hour'"
+        );
 
-        req.io.emit('new-login', { activeUsers });
+        //console.log(activeUsers.rows)
+
+        req.io.emit('new-login', { activeUsers: activeUsers.rows });
 
         res.status(201).send({
           token,
@@ -172,8 +174,10 @@ router.post('/signup', async (req, res) => {
 });
 
 router.post('/logout', async (req, res) => {
+  //console.log(req.body)
   const { username } = req.body;
-  console.log('test loggedout =', username);
+  //console.log(username)
+  //console.log('test loggedout =', username);
 
   //set user last active at to null
   const logoutUser = await pool.query(
@@ -186,8 +190,11 @@ router.post('/logout', async (req, res) => {
     "SELECT * FROM users WHERE last_active_at >= NOW() - interval '12 hour'"
   );
 
+  //console.log(activeUsers.rows)
+
   if (activeUsers) {
-    res.status(201).send({ activeUsers });
+    req.io.emit('user-leave', { activeUsers: activeUsers.rows });
+    res.status(201).send({ activeUsers: activeUsers.rows });
   }
 
 });
@@ -195,7 +202,7 @@ router.post('/logout', async (req, res) => {
 router.get('/verify-token', authenticateToken, (req, res) => {
   try {
     const data = Object.assign(req.user, {isVerified: true})
-    console.log(req.user)
+    //console.log(req.user)
     res.json(data);
   } catch (error) {
     //console.error(err.message);

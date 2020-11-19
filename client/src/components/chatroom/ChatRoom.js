@@ -49,13 +49,15 @@ const Chatroom = ({ user, setAuth }) => {
   const setLoggedOut = async () => {
     console.log('test loggedout =', user);
 
+    console.log({ username: user.user_name })
+
     try {
       const config = {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ username: user.username }),
+        body: JSON.stringify({ username: user.user_name }),
       };
 
       const response = await fetch('/users/logout', config);
@@ -115,7 +117,9 @@ const Chatroom = ({ user, setAuth }) => {
 
   const displayActiveUsers =
     users.length >= 1
-      ? users.map((user, index) => <li key={index}> {user.user_name}</li>)
+      ? users.map((user, index) => {
+      console.log(user)
+      return <li key={index}> {user.user_name}</li>})
       : null;
 
   return (
