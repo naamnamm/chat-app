@@ -3,6 +3,9 @@ import { Toast } from 'react-bootstrap';
 
 const Message = ({ msg, currentUser }) => {
 console.log(currentUser)
+  const isUsernameDisplayed = false;
+  
+
 
   return msg.username === 'chatbot' ? (
     <p className='text-muted'>{msg.message_text}</p>

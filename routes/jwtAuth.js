@@ -105,8 +105,6 @@ router.post('/login', async (req, res) => {
           "SELECT * FROM users WHERE last_active_at >= NOW() - interval '12 hour'"
         );
 
-        //console.log(activeUsers.rows)
-
         req.io.emit('new-login', { activeUsers: activeUsers.rows });
 
         res.status(201).send({
@@ -161,9 +159,8 @@ router.post('/signup', async (req, res) => {
         'INSERT INTO users (user_name, user_password) VALUES ($1, $2) RETURNING *',
         [username, passHash]
       );
-      console.log(newUser.rows[0]);
+      //console.log(newUser.rows[0]);
 
-      // res.json(newUser);
       res
         .status(201)
         .send({ success: { code: 201, message: 'successfully signed up' } });
@@ -174,12 +171,8 @@ router.post('/signup', async (req, res) => {
 });
 
 router.post('/logout', async (req, res) => {
-  //console.log(req.body)
   const { username } = req.body;
-  //console.log(username)
-  //console.log('test loggedout =', username);
 
-  //set user last active at to null
   const logoutUser = await pool.query(
     'UPDATE users SET last_active_at = $1 WHERE user_name = $2', 
     [null, username]
@@ -189,8 +182,6 @@ router.post('/logout', async (req, res) => {
   const activeUsers = await pool.query(
     "SELECT * FROM users WHERE last_active_at >= NOW() - interval '12 hour'"
   );
-
-  //console.log(activeUsers.rows)
 
   if (activeUsers) {
     req.io.emit('user-leave', { activeUsers: activeUsers.rows });

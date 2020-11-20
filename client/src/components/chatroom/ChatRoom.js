@@ -5,6 +5,7 @@ import { FaSmile, FaUsers } from 'react-icons/fa';
 import io from 'socket.io-client';
 import ScrollableFeed from 'react-scrollable-feed';
 import Message from './Message';
+import Messages from './Messages';
 
 const socket = io('http://localhost:5000/');
 
@@ -62,7 +63,6 @@ const Chatroom = ({ user, setAuth }) => {
 
       const response = await fetch('/users/logout', config);
       // const loggedOutData = await response.json();
-      // console.log(response);
 
       if (response.ok) {
         setAuth(false);
@@ -115,6 +115,8 @@ const Chatroom = ({ user, setAuth }) => {
   }
   );
 
+  const displayMessages = <Messages key={Date.now()} messages={messages} currentUser={user.user_name} />
+
   const displayActiveUsers =
     users.length >= 1
       ? users.map((user, index) => {
@@ -143,9 +145,8 @@ const Chatroom = ({ user, setAuth }) => {
             Channels
           </div> 
           <ul className='pr-2'>
-          <Button className='mt-2 mb-2'> General </Button>
+          <Button onClick={() => setChannel('general')} className='mt-2 mb-2'> General </Button>
           <Button onClick={() => setChannel('funstuff')}> Fun Stuff </Button>
-          
           </ul>
 
           <div>
@@ -155,9 +156,17 @@ const Chatroom = ({ user, setAuth }) => {
           
         </div>
 
+        <div className='chat-area'> 
+
+        <div className='channel-name'>
+          <p>{channel}</p>
+        </div>
+
         <div className='chat-main'>
           <ScrollableFeed>{displayMsgs}</ScrollableFeed>
         </div>
+        </div>
+
       </div>
 
       <Form className='input-msg'>
@@ -180,6 +189,8 @@ const Chatroom = ({ user, setAuth }) => {
     </div>
       {/* <p>{username}</p> */}
       <p>{user.username}</p>
+      <div>{displayMessages}</div>
+
     </>
   );
 };
