@@ -4,6 +4,7 @@ import './ChatRoom.css';
 import { FaSmile, FaUsers } from 'react-icons/fa';
 import io from 'socket.io-client';
 import ScrollableFeed from 'react-scrollable-feed';
+import ScrollToBottom from 'react-scroll-to-bottom';
 import Message from './Message';
 import Messages from './Messages';
 
@@ -145,7 +146,7 @@ const Chatroom = ({ user, setAuth }) => {
             Channels
           </div> 
           <ul className='pr-2'>
-          <Button onClick={() => setChannel('general')} className='mt-2 mb-2'> General </Button>
+          <Button onClick={() => setChannel('general')} className='mt-2 mb-2 mr-2'> General </Button>
           <Button onClick={() => setChannel('funstuff')}> Fun Stuff </Button>
           </ul>
 
@@ -189,7 +190,11 @@ const Chatroom = ({ user, setAuth }) => {
     </div>
       {/* <p>{username}</p> */}
       <p>{user.username}</p>
-      <div>{displayMessages}</div>
+      <div className='chat-main'>
+        <ScrollableFeed>
+          {displayMessages} 
+      </ScrollableFeed>
+      </div>
 
     </>
   );

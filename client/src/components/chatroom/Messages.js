@@ -1,5 +1,6 @@
 import React from 'react'
 import Msg from './Msg';
+import ScrollToBottom from 'react-scroll-to-bottom';
 
 const Messages = ({messages, currentUser}) => {
   console.log(messages, currentUser)
