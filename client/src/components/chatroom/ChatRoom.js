@@ -135,7 +135,7 @@ const Chatroom = ({ user, setAuth }) => {
           </Navbar.Brand>
 
           <Nav className='ml-auto'>
-            <Button onClick={() => setLoggedOut()}>Log out</Button>
+            <Button onClick={() => setLoggedOut()} variant="outline-light">Log out</Button>
           </Nav>
         </Navbar>
       </div>
@@ -147,7 +147,7 @@ const Chatroom = ({ user, setAuth }) => {
           </div> 
           <ul className='pr-2'>
           <Button onClick={() => setChannel('general')} className='mt-2 mb-2 mr-2'> General </Button>
-          <Button onClick={() => setChannel('funstuff')}> Fun Stuff </Button>
+          <Button onClick={() => setChannel('funstuff')} > Fun Stuff </Button>
           </ul>
 
           <div>
@@ -160,11 +160,11 @@ const Chatroom = ({ user, setAuth }) => {
         <div className='chat-area'> 
 
         <div className='channel-name'>
-          <p>{channel}</p>
+          <div>{channel}</div>
         </div>
 
         <div className='chat-main'>
-          <ScrollableFeed>{displayMsgs}</ScrollableFeed>
+          <ScrollableFeed>{displayMessages}</ScrollableFeed>
         </div>
         </div>
 
@@ -179,7 +179,7 @@ const Chatroom = ({ user, setAuth }) => {
           />
           <InputGroup.Append>
             <Button
-              variant='outline-secondary'
+              variant='outline-light'
               onClick={() => handleClick(msgInput)}
             >
               Send

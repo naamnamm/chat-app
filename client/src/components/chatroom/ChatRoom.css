@@ -1,6 +1,6 @@
 .header {
   height: 60px;
-  background-color: lightgreen;
+  background-color: #1f8ceb;
 }
 
 .chat-container {
@@ -11,22 +11,40 @@
 
 .chat-sidebar {
   width: 300px;
-  height: 440px;
-  background-color: lightpink;
+  height: 444px;
+  background-color: whitesmoke;
+  border-left: 1px solid lightgrey;
 }
+
+/* .chat-area {
+  background-color: #f3f3f3;
+} */
 
 .chat-main {
   width: 500px;
-  height: 400px;
-  background-color: lightsalmon;
+  height: 405px;
+  background-color: #f3f3f3;
+  border: 1px solid lightgray;
 }
 
 .input-msg {
   height: 60px;
-  background-color: lightblue;
+  background-color: #1f8ceb;
 }
 
 ul {
   list-style-type: none;
   text-align: left;
+}
+
+.channel-name {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.channel-name div {
+  resize: vertical;
+  overflow: auto;
+  padding: 5px 0;
 }

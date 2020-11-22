@@ -11,7 +11,8 @@
   width: 100%;
   letter-spacing: 0;
   float: left;
-  font-size: 1.1em;
+  font-size: 1em;
+  margin-bottom: 0;
   word-wrap: break-word;
 }
 
@@ -20,11 +21,22 @@
 }
 
 .messageContainer {
-  border: 1px solid black;
   display: flex;
   justify-content: flex-end;
   padding: 0 5%;
   margin-top: 3px;
+}
+
+.date-box {
+  font-size: 15px;
+  font-weight: bold;
+  background: white;
+  border-radius: 20px;
+  border: 1px solid grey;
+  padding: 5px 20px;
+  color: black;
+  display: inline-block;
+  max-width: 80%;
 }
 
 .sentText {
@@ -60,9 +72,10 @@
 }
 
 .backgroundBlue {
-  background: #2979ff;
+  background: #1f8ceb;
 }
 
 .backgroundLight {
-  background: #f3f3f3;
+  background: white;
+  border: 1px solid grey;
 }
