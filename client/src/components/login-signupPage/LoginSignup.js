@@ -35,7 +35,7 @@ const LoginSignup = ({
       const response = await fetch('/users/login', config);
       const loginData = await response.json();
 
-      console.log(loginData);
+      //console.log(loginData);
 
       //debugger;
       if (!response.ok) {

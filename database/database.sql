@@ -23,13 +23,19 @@ CREATE TABLE users (
   user_name VARCHAR(255) NOT NULL,
   user_password VARCHAR(255) NOT NULL,
   last_active_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  current_channel TEXT NOT NULL
 );
+
+ALTER TABLE users RENAME COLUMN user_id TO id;
+ALTER TABLE users RENAME COLUMN user_name TO name;
+ALTER TABLE users RENAME COLUMN user_password TO password;
 
 CREATE TABLE channels (
   channel_id TEXT PRIMARY KEY DEFAULT generate_uid(5),
   channel_name TEXT NOT NULL
 );
+
+ALTER TABLE channels RENAME COLUMN channel_id TO id;
+ALTER TABLE channels RENAME COLUMN channel_name TO name;
 
 CREATE TABLE messages (
   message_id TEXT PRIMARY KEY DEFAULT generate_uid(15),
@@ -41,8 +47,36 @@ CREATE TABLE messages (
   post_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-ALTER TABLE messages ADD COLUMN channel_name TEXT NOT NULL;
-ALTER TABLE messages ADD COLUMN post_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP;
+-- change the column from NOT NULL to NULL 
+-- change data type from text to uuid
+-- change to foreign key
+-- set col to NOT NULL
+ALTER TABLE messages ALTER COLUMN user_id DROP NOT NULL;
+ALTER TABLE messages ALTER COLUMN user_id SET DATA TYPE UUID USING user_id::UUID;
+ALTER TABLE messages 
+   ADD CONSTRAINT fk_link_user_id
+   FOREIGN KEY (user_id) 
+   REFERENCES users(id);
+ALTER TABLE messages ALTER COLUMN user_id SET NOT NULL;
+
+-- check table's data type
+\d messages
+ 
+ALTER TABLE messages ALTER COLUMN channel_id DROP NOT NULL;
+ALTER TABLE messages 
+   ADD CONSTRAINT fk_link_channel_id
+   FOREIGN KEY (channel_id) 
+   REFERENCES channels(id);
+ALTER TABLE messages ALTER COLUMN channel_id SET NOT NULL;
+
+ALTER TABLE messages RENAME COLUMN message_id TO id;
+ALTER TABLE messages RENAME COLUMN message_text TO text;
+ALTER TABLE messages RENAME COLUMN post_time TO created_at;
+ALTER TABLE messages DROP COLUMN user_name;
+ALTER TABLE messages DROP COLUMN channel_name;
+
+SELECT * FROM messages JOIN users ON messages.user_id = users.user_id WHERE user_id = 1;
+
 TRUNCATE messages; 
 DELETE FROM messages;
 DROP TABLE IF EXISTS messages;

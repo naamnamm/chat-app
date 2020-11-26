@@ -26,6 +26,7 @@ const authenticateToken = (req, res, next) => {
 
 router.get('/channel/:channel', async (req, res) => {
   //console.log(req.params)
+  //console.log(req.user)
   const channel = req.params.channel.slice(1);
   //console.log(channel)
   
@@ -35,11 +36,14 @@ router.get('/channel/:channel', async (req, res) => {
 
   // const channelID = getChannel.rows[0].channel_id
   
+  // const getMessages = await pool.query(
+  //   "SELECT * FROM messages JOIN channels ON messages.channel_id = channels.id WHERE channel_name = $1", [channel]
+  // );
   const getMessages = await pool.query(
-    "SELECT * FROM messages WHERE channel_name = $1", [channel]
+    "SELECT m.id, text, created_at, c.name, u.name FROM messages AS m INNER JOIN channels AS c ON m.channel_id = c.id INNER JOIN users AS u ON m.user_id = u.id"
   );
 
-  //console.log(getMessages.rows)
+  console.log('getmessage log', getMessages.rows)
 
   if (getMessages) {
     res.send(getMessages.rows);
@@ -56,18 +60,20 @@ router.post('/post', authenticateToken, async (req, res) => {
   //console.log(`channel = ${channel}` )
   
   const getChannel = await pool.query(
-    "SELECT * FROM channels WHERE channel_name = $1", [channel]
+    "SELECT * FROM channels WHERE name = $1", [channel]
   );
 
+  console.log('channel', getChannel.rows)
+
   //insert new message with user ID, channel ID and message into message table
-  const msgpost = await pool.query('INSERT INTO messages (message_text, user_id, user_name, channel_id, channel_name) VALUES ($1, $2, $3, $4, $5) RETURNING *',
-  [message, req.user.user_id, req.user.user_name, getChannel.rows[0].channel_id, getChannel.rows[0].channel_name]) 
+  const msgpost = await pool.query('INSERT INTO messages (text, user_id, , channel_id) VALUES ($1, $2, $3) RETURNING *',
+  [message, req.user.user_id, getChannel.rows[0].id]) 
 
   //console.log(msgpost.rows[0])
   
-  req.io.emit('message', formatMessage(getChannel.rows[0].channel_name, req.user.user_name, message));
+  req.io.emit('message', formatMessage(getChannel.rows[0].name, req.user.user_name, message));
   
-  res.status(201).send({username: req.user.user_name, channel: getChannel.rows[0].channel_name, message})
+  res.status(201).send({username: req.user.user_name, channel: getChannel.rows[0].name, message})
 });
 
 // login route & sign token
@@ -76,26 +82,26 @@ router.post('/login', async (req, res) => {
     const { username, password } = req.body;
 
     const usernameMatch = await pool.query(
-      'SELECT * FROM users WHERE user_name = $1',
+      'SELECT * FROM users WHERE name = $1',
       [username]
     );
 
     if (usernameMatch) {
       const passwordMatch = await bcrypt.compare(
         password,
-        usernameMatch.rows[0].user_password
+        usernameMatch.rows[0].password
       );
       if (passwordMatch) {
         //alter last_active_at to current time
-        await pool.query('UPDATE users SET last_active_at = $1 WHERE user_name = $2', [new Date(), username], (err, res) => {
+        await pool.query('UPDATE users SET last_active_at = $1 WHERE name = $2', [new Date(), username], (err, res) => {
           //console.log(err, res);
           //pool.end();
         });
 
         //now we serialize user with webtoken
         const payload = {
-          user_id: usernameMatch.rows[0].user_id,
-          user_name: usernameMatch.rows[0].user_name
+          user_id: usernameMatch.rows[0].id,
+          user_name: usernameMatch.rows[0].name
         };
         const token = jwt.sign(payload, process.env.ACCESS_TOKEN_SECRET, {
           expiresIn: '12h',
@@ -109,8 +115,8 @@ router.post('/login', async (req, res) => {
 
         res.status(201).send({
           token,
-          user_id: usernameMatch.rows[0].user_id,
-          user_name: usernameMatch.rows[0].user_name,
+          user_id: usernameMatch.rows[0].id,
+          user_name: usernameMatch.rows[0].name,
         });
 
       } else {
@@ -146,7 +152,7 @@ router.post('/signup', async (req, res) => {
   try {
     const { username, password } = req.body;
     const userMatch = await pool.query(
-      'SELECT * FROM users WHERE user_name = $1',
+      'SELECT * FROM users WHERE name = $1',
       [username]
     );
 
@@ -156,7 +162,7 @@ router.post('/signup', async (req, res) => {
       const saltRounds = await bcrypt.genSalt();
       const passHash = await bcrypt.hash(password, saltRounds);
       const newUser = await pool.query(
-        'INSERT INTO users (user_name, user_password) VALUES ($1, $2) RETURNING *',
+        'INSERT INTO users (name, password) VALUES ($1, $2) RETURNING *',
         [username, passHash]
       );
       //console.log(newUser.rows[0]);
@@ -174,7 +180,7 @@ router.post('/logout', async (req, res) => {
   const { username } = req.body;
 
   const logoutUser = await pool.query(
-    'UPDATE users SET last_active_at = $1 WHERE user_name = $2', 
+    'UPDATE users SET last_active_at = $1 WHERE name = $2', 
     [null, username]
   );
 

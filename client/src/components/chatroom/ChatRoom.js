@@ -122,7 +122,7 @@ const Chatroom = ({ user, setAuth }) => {
     users.length >= 1
       ? users.map((user, index) => {
       console.log(user)
-      return <li key={index}> {user.user_name}</li>})
+      return <li key={index}> {user.name}</li>})
       : null;
 
   return (

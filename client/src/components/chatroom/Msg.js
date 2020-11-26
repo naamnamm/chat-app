@@ -10,7 +10,7 @@ const Msg = ({date, messages, currentUser}) => {
     return msg.user_name == currentUser ? 
     (<div className="messageContainer ml-auto mb-0">
         <div className="messageBox backgroundBlue">
-          <p className="messageText colorWhite">{msg.message_text}</p>
+          <p className="messageText colorWhite">{msg.text}</p>
         </div>
           <p className="sentText pl-10">{msg.user_name}</p>
       </div>
@@ -18,7 +18,7 @@ const Msg = ({date, messages, currentUser}) => {
       <div className="messageContainer">
         <p className="sentText pr-10">{msg.user_name}</p>
         <div className="messageBox backgroundLight mr-auto mb-0">
-          <p className="messageText colorDark">{msg.message_text}</p>
+          <p className="messageText colorDark">{msg.text}</p>
         </div> 
       </div>)
       ;

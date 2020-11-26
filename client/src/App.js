@@ -19,7 +19,7 @@ const App = () => {
   const setAuth = (boolean) => {
     setIsAuthenticated(boolean);
   };
-
+ 
   const verifyToken = async () => {
     try {
       const response = await fetch('users/verify-token', {

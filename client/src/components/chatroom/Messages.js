@@ -1,13 +1,12 @@
 import React from 'react'
 import Msg from './Msg';
-import ScrollToBottom from 'react-scroll-to-bottom';
 
 const Messages = ({messages, currentUser}) => {
   console.log(messages, currentUser)
 
   // this gives an object with dates as keys
   const groups = messages.reduce((groups, message) => {
-    const date = message.post_time.split('T')[0];
+    const date = message.created_at.split('T')[0];
     if (!groups[date]) {
       groups[date] = [];
     }
