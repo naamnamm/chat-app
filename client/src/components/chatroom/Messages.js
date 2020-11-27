@@ -1,5 +1,5 @@
 import React from 'react'
-import Msg from './Msg';
+import Message from './Message';
 
 const Messages = ({messages, currentUser}) => {
   console.log(messages, currentUser)
@@ -23,14 +23,14 @@ const Messages = ({messages, currentUser}) => {
 
   console.log(groupMessages)
 
-  const displayMsgs = groupMessages.map(group => {
+  const displayMessage = groupMessages.map(group => {
     console.log(group.messages)
-    return <Msg key={group.date} date={group.date} messages={group.messages} currentUser={currentUser} />
+    return <Message key={group.date} date={group.date} messages={group.messages} currentUser={currentUser} />
   })
 
   return (
     <div>
-      {displayMsgs}
+      {displayMessage}
     </div>
   )
 }

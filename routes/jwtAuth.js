@@ -40,13 +40,17 @@ router.get('/channel/:channel', async (req, res) => {
   //   "SELECT * FROM messages JOIN channels ON messages.channel_id = channels.id WHERE channel_name = $1", [channel]
   // );
   const getMessages = await pool.query(
-    "SELECT m.id, text, created_at, c.name, u.name FROM messages AS m INNER JOIN channels AS c ON m.channel_id = c.id INNER JOIN users AS u ON m.user_id = u.id"
+    "SELECT m.id, m.text, m.created_at, c.name AS channel_name, u.name AS username FROM messages AS m INNER JOIN channels AS c ON m.channel_id = c.id INNER JOIN users AS u ON m.user_id = u.id"
   );
 
-  console.log('getmessage log', getMessages.rows)
+  //console.log('getmessage log', getMessages.rows)
 
-  if (getMessages) {
-    res.send(getMessages.rows);
+  const filterMessages = getMessages.rows.filter(message => message.channel_name === channel)
+  
+  //console.log('filter', filterMessages)
+
+  if (filterMessages) {
+    res.send(filterMessages);
   }
 });
 

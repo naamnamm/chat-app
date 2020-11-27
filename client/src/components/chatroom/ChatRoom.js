@@ -5,7 +5,6 @@ import { FaSmile, FaUsers } from 'react-icons/fa';
 import io from 'socket.io-client';
 import ScrollableFeed from 'react-scrollable-feed';
 import ScrollToBottom from 'react-scroll-to-bottom';
-import Message from './Message';
 import Messages from './Messages';
 
 const socket = io('http://localhost:5000/');
@@ -110,12 +109,6 @@ const Chatroom = ({ user, setAuth }) => {
     });
   }, []);
 
-  const displayMsgs = messages.map(msg => {
-    //console.log(msg)
-    return <Message key={msg.message_id} msg={msg} currentUser={user.user_name} />
-  }
-  );
-
   const displayMessages = <Messages key={Date.now()} messages={messages} currentUser={user.user_name} />
 
   const displayActiveUsers =
@@ -187,15 +180,8 @@ const Chatroom = ({ user, setAuth }) => {
           </InputGroup.Append>
         </InputGroup>
       </Form>
+      <div>{user.user_name}</div>
     </div>
-      {/* <p>{username}</p> */}
-      <p>{user.username}</p>
-      <div className='chat-main'>
-        <ScrollableFeed>
-          {displayMessages} 
-      </ScrollableFeed>
-      </div>
-
     </>
   );
 };
