@@ -22,7 +22,7 @@ const Message = ({date, messages, currentUser}) => {
         </div> 
       </div>)
       ;
-  })
+  }).sort().reverse();
   
   return (
     <div>

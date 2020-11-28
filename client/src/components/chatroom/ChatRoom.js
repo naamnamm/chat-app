@@ -4,7 +4,6 @@ import './ChatRoom.css';
 import { FaSmile, FaUsers } from 'react-icons/fa';
 import io from 'socket.io-client';
 import ScrollableFeed from 'react-scrollable-feed';
-import ScrollToBottom from 'react-scroll-to-bottom';
 import Messages from './Messages';
 
 const socket = io('http://localhost:5000/');
@@ -35,6 +34,7 @@ const Chatroom = ({ user, setAuth }) => {
       };
       const response = await fetch('/users/post', config);
       const msgData = await response.json();
+      console.log(msgData)
 
       if (response.ok) {
         
@@ -95,9 +95,8 @@ const Chatroom = ({ user, setAuth }) => {
       });
 
     //handleChannels();
-
     socket.on('message', (msg) => {
-      setMessages((messages) => [...messages, msg]);
+      setMessages((messages) => [msg, ...messages]);
     });
 
     socket.on('new-login', ({ activeUsers }) => {
@@ -110,6 +109,7 @@ const Chatroom = ({ user, setAuth }) => {
   }, []);
 
   const displayMessages = <Messages key={Date.now()} messages={messages} currentUser={user.user_name} />
+
 
   const displayActiveUsers =
     users.length >= 1

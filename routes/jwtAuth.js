@@ -59,23 +59,23 @@ router.post('/post', authenticateToken, async (req, res) => {
   //console.log('user post:', req.body, req.user);
   const { user, message, channel } = req.body;
 
-  //console.log(`userid = ${req.user.user_id}` )
-  //console.log(`message = ${message}` )
-  //console.log(`channel = ${channel}` )
+  console.log(`userid = ${req.user.user_id} ${req.user.user_name}` )
+  console.log(`message = ${message}` )
+  console.log(`channel = ${channel}` )
   
   const getChannel = await pool.query(
     "SELECT * FROM channels WHERE name = $1", [channel]
   );
 
-  console.log('channel', getChannel.rows)
+  //console.log('channel', getChannel.rows)
 
   //insert new message with user ID, channel ID and message into message table
-  const msgpost = await pool.query('INSERT INTO messages (text, user_id, , channel_id) VALUES ($1, $2, $3) RETURNING *',
+  const msgpost = await pool.query('INSERT INTO messages (text, user_id, channel_id) VALUES ($1, $2, $3) RETURNING *',
   [message, req.user.user_id, getChannel.rows[0].id]) 
 
-  //console.log(msgpost.rows[0])
+  console.log(msgpost.rows[0].created_at)
   
-  req.io.emit('message', formatMessage(getChannel.rows[0].name, req.user.user_name, message));
+  req.io.emit('message', formatMessage(getChannel.rows[0].name, req.user.user_name, message, msgpost.rows[0].created_at));
   
   res.status(201).send({username: req.user.user_name, channel: getChannel.rows[0].name, message})
 });

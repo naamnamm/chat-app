@@ -1,9 +1,16 @@
-import React from 'react'
+import React, { useEffect, useRef } from 'react'
 import Message from './Message';
 
 const Messages = ({messages, currentUser}) => {
   console.log(messages, currentUser)
+  const messagesEndRef = useRef(null)
 
+  const scrollToBottom = () => {
+    messagesEndRef.current.scrollIntoView({ behavior: "smooth" })
+  }
+
+  useEffect(scrollToBottom, [messages]);
+  
   // this gives an object with dates as keys
   const groups = messages.reduce((groups, message) => {
     const date = message.created_at.split('T')[0];
@@ -19,7 +26,7 @@ const Messages = ({messages, currentUser}) => {
       date,
       messages: groups[date]
     };
-  });
+  }).sort().reverse();
 
   console.log(groupMessages)
 
@@ -31,6 +38,7 @@ const Messages = ({messages, currentUser}) => {
   return (
     <div>
       {displayMessage}
+      <div ref={messagesEndRef}></div>
     </div>
   )
 }
