@@ -155,19 +155,28 @@ router.get('/getActiveUsers', async (req, res) => {
 router.post('/signup', async (req, res) => {
   try {
     const { username, password } = req.body;
+    const errors = [];
+
     const userMatch = await pool.query(
       'SELECT * FROM users WHERE name = $1',
       [username]
     );
-
     if (userMatch.rows.length > 0) {
-      return res.status(401).json('User already exist!');
+      errors.push({ message: 'Username already exist!'});
+    }
+
+    if (password.length < 6) {
+      errors.push({ message: 'Password must be at least 6 characters' });
+    }
+
+    if (errors.length > 0) {
+      return res.status(401).send(errors);
     } else {
       const saltRounds = await bcrypt.genSalt();
       const passHash = await bcrypt.hash(password, saltRounds);
       const newUser = await pool.query(
-        'INSERT INTO users (name, password) VALUES ($1, $2) RETURNING *',
-        [username, passHash]
+        'INSERT INTO users (name, password, last_active_at) VALUES ($1, $2, $3) RETURNING *',
+        [username, passHash, null]
       );
       //console.log(newUser.rows[0]);
 

@@ -4,7 +4,6 @@ import { Modal, Form, Button } from 'react-bootstrap';
 const SignUp = ({ closeModal }) => {
   const usernameRef = useRef();
   const passwordRef = useRef();
-  //const [registeredUser, setRegisteredUser] = useState([]);
   const [errorMsg, setErrorMsg] = useState('');
 
   const handleSubmit = async (e) => {
@@ -29,7 +28,7 @@ const SignUp = ({ closeModal }) => {
       const signupData = await response.json();
       console.log(signupData);
 
-      !response.ok ? setErrorMsg(signupData.error.message) : closeModal();
+      !response.ok ? setErrorMsg(signupData) : closeModal();
     } catch (error) {
       console.log(error);
     }
@@ -40,7 +39,7 @@ const SignUp = ({ closeModal }) => {
       <Modal.Header closeButton>Create Account</Modal.Header>
       <Modal.Body>
         <Form onSubmit={handleSubmit}>
-          {errorMsg ? <div className='text-danger'>{errorMsg}</div> : null}
+          {errorMsg ? errorMsg.map((err => <div className='text-danger'>{err.message}</div>)) : null}
           {/* {https://react-bootstrap.github.io/components/alerts/} */}
           <Form.Group>
             <Form.Label>Username</Form.Label>
