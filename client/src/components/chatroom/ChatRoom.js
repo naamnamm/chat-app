@@ -50,7 +50,7 @@ const Chatroom = ({ user, setAuth }) => {
   const setLoggedOut = async () => {
     console.log('test loggedout =', user);
 
-    console.log({ username: user.user_name })
+    console.log({ username: user.name })
 
     try {
       const config = {
@@ -58,7 +58,7 @@ const Chatroom = ({ user, setAuth }) => {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ username: user.user_name }),
+        body: JSON.stringify({ username: user.name }),
       };
 
       const response = await fetch('/users/logout', config);
@@ -108,14 +108,15 @@ const Chatroom = ({ user, setAuth }) => {
     });
   }, []);
 
-  const displayMessages = <Messages key={Date.now()} messages={messages} currentUser={user.user_name} />
+  const displayMessages = <Messages key={Date.now()} messages={messages} currentUser={user.name} />
 
 
   const displayActiveUsers =
     users.length >= 1
-      ? users.map((user, index) => {
-      console.log(user)
-      return <li key={index}> {user.name}</li>})
+      ? users.map((u, index) => {
+          return user.name === u.name ? 
+            <li key={index} className='font-weight-bold'> {u.name}</li>
+          : <li key={index}> {u.name}</li>})
       : null;
 
   return (
@@ -180,7 +181,7 @@ const Chatroom = ({ user, setAuth }) => {
           </InputGroup.Append>
         </InputGroup>
       </Form>
-      <div>{user.user_name}</div>
+      <div>{user.name}</div>
     </div>
     </>
   );

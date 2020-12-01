@@ -6,6 +6,9 @@ const formatMessage = require('../utils/message');
 const jwt = require('jsonwebtoken');
 const pool = require('../database/db');
 
+//to add current_room to column users by adding a change script
+//to insert current room when log in & select channel 
+
 const activeUsers = [];
 
 const authenticateToken = (req, res, next) => {
@@ -24,26 +27,19 @@ const authenticateToken = (req, res, next) => {
   });
 };
 
+// get channel & set user channel to specific room
 router.get('/channel/:channel', async (req, res) => {
   //console.log(req.params)
   //console.log(req.user)
   const channel = req.params.channel.slice(1);
-  //console.log(channel)
-  
-  // const getChannel = await pool.query(
-  //   "SELECT * FROM channels WHERE channel_name = $1", [channel]
-  // );
 
-  // const channelID = getChannel.rows[0].channel_id
-  
-  // const getMessages = await pool.query(
-  //   "SELECT * FROM messages JOIN channels ON messages.channel_id = channels.id WHERE channel_name = $1", [channel]
-  // );
   const getMessages = await pool.query(
     "SELECT m.id, m.text, m.created_at, c.name AS channel_name, u.name AS username FROM messages AS m INNER JOIN channels AS c ON m.channel_id = c.id INNER JOIN users AS u ON m.user_id = u.id"
   );
 
   //console.log('getmessage log', getMessages.rows)
+
+  
 
   const filterMessages = getMessages.rows.filter(message => message.channel_name === channel)
   
@@ -59,7 +55,7 @@ router.post('/post', authenticateToken, async (req, res) => {
   //console.log('user post:', req.body, req.user);
   const { user, message, channel } = req.body;
 
-  console.log(`userid = ${req.user.user_id} ${req.user.user_name}` )
+  console.log(`userid = ${req.user.id} ${req.user.name}` )
   console.log(`message = ${message}` )
   console.log(`channel = ${channel}` )
   
@@ -71,13 +67,13 @@ router.post('/post', authenticateToken, async (req, res) => {
 
   //insert new message with user ID, channel ID and message into message table
   const msgpost = await pool.query('INSERT INTO messages (text, user_id, channel_id) VALUES ($1, $2, $3) RETURNING *',
-  [message, req.user.user_id, getChannel.rows[0].id]) 
+  [message, req.user.id, getChannel.rows[0].id]) 
 
   console.log(msgpost.rows[0].created_at)
   
-  req.io.emit('message', formatMessage(getChannel.rows[0].name, req.user.user_name, message, msgpost.rows[0].created_at));
+  req.io.emit('message', formatMessage(getChannel.rows[0].name, req.user.name, message, msgpost.rows[0].created_at));
   
-  res.status(201).send({username: req.user.user_name, channel: getChannel.rows[0].name, message})
+  res.status(201).send({username: req.user.name, channel: getChannel.rows[0].name, message})
 });
 
 // login route & sign token
@@ -104,8 +100,8 @@ router.post('/login', async (req, res) => {
 
         //now we serialize user with webtoken
         const payload = {
-          user_id: usernameMatch.rows[0].id,
-          user_name: usernameMatch.rows[0].name
+          id: usernameMatch.rows[0].id,
+          name: usernameMatch.rows[0].name
         };
         const token = jwt.sign(payload, process.env.ACCESS_TOKEN_SECRET, {
           expiresIn: '12h',
@@ -119,8 +115,8 @@ router.post('/login', async (req, res) => {
 
         res.status(201).send({
           token,
-          user_id: usernameMatch.rows[0].id,
-          user_name: usernameMatch.rows[0].name,
+          id: usernameMatch.rows[0].id,
+          name: usernameMatch.rows[0].name,
         });
 
       } else {
