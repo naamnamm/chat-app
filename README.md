@@ -1,4 +1,4 @@
-# Twitter App
+# Chat Application
 
 App built with React (frontend) and Express (backend) that pulls data to and from the database [Postgres](http://postgresql.org/).
 
