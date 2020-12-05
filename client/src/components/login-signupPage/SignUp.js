@@ -11,7 +11,7 @@ const SignUp = ({ closeModal }) => {
 
     try {
       const data = {
-        username: usernameRef.current.value,
+        username: usernameRef.current.value.toLowerCase(),
         password: passwordRef.current.value,
       };
 

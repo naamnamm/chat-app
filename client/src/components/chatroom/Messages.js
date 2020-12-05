@@ -1,18 +1,20 @@
-import React, { useEffect, useRef } from 'react'
+import React, { useEffect, useRef } from 'react';
 import Message from './Message';
 
-const Messages = ({messages, currentUser}) => {
-  console.log(messages, currentUser)
-  const messagesEndRef = useRef(null)
+const Messages = ({ messages, currentUser, currentChannel }) => {
+  const messagesEndRef = useRef(null);
 
   const scrollToBottom = () => {
-    messagesEndRef.current.scrollIntoView({ behavior: "smooth" })
-  }
+    messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
+  };
 
-  useEffect(scrollToBottom, [messages]);
-  
-  // this gives an object with dates as keys
-  const groups = messages.reduce((groups, message) => {
+  const channelMessages = messages.filter(
+    (message) => message.channel_name === currentChannel
+  );
+
+  useEffect(scrollToBottom, [channelMessages]);
+
+  const groups = channelMessages.reduce((groups, message) => {
     const date = message.created_at.split('T')[0];
     if (!groups[date]) {
       groups[date] = [];
@@ -24,23 +26,27 @@ const Messages = ({messages, currentUser}) => {
   const groupMessages = Object.keys(groups).map((date) => {
     return {
       date,
-      messages: groups[date]
+      messages: groups[date],
     };
-  }).sort().reverse();
+  });
 
-  console.log(groupMessages)
-
-  const displayMessage = groupMessages.map(group => {
-    console.log(group.messages)
-    return <Message key={group.date} date={group.date} messages={group.messages} currentUser={currentUser} />
-  })
+  const displayMessage = groupMessages.map((group) => {
+    return (
+      <Message
+        key={group.date}
+        date={group.date}
+        messages={group.messages}
+        currentUser={currentUser}
+      />
+    );
+  });
 
   return (
     <div>
       {displayMessage}
       <div ref={messagesEndRef}></div>
     </div>
-  )
-}
+  );
+};
 
-export default Messages
+export default Messages;

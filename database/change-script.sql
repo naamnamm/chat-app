@@ -10,7 +10,5 @@ BEGIN
 		RAISE NOTICE '\tColumn "username" does not exist.  No action was necessary.';
 	END IF;	
 
-  
-
 END
 $do$

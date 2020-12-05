@@ -20,7 +20,7 @@ const LoginSignup = ({
   const handleLogIn = async () => {
     try {
       const data = {
-        username: usernameRef.current.value,
+        username: usernameRef.current.value.toLowerCase(),
         password: passwordRef.current.value,
       };
 
