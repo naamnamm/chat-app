@@ -36,6 +36,20 @@ I've learned so much from this project. so much effort and time into this. the e
 
 - [Heroku](https://www.heroku.com)
 
+## Local Installation Directions
+
+First install the project's dependencies and scripts in the root directory run the command:
+
+``` npm i```
+
+then cd into client and run the same command :
+
+``` npm i```
+
+Then to run the app on your system use the command:
+
+``` npm run start```
+
 ## Author
 
 - Naam Pondpat - _Full Stack Software Developer_ - [LinkedIn](https://www.linkedin.com/in/naam-pondpat-638153150/)
