@@ -14,16 +14,15 @@ This is my second full-stack application.
 
 ### Main Functionality
 
-1) Sign-up process - once the user enter their credential and sign up, it sends user data to the backend and the backend further query the database to see whether the username is existed. If not, username and bcrypted password will be saved in the database
+1) Sign-up process - once the user enters their credential and signs up, it sends user data to the backend, and the backend further query the database to see whether the username exists. If not, username and bcrypted password will be saved in the database
 
-2) Log-in process - once the authentication process is complete meaning username and password matchs the database, the backend will create a token and send it back to the client which will be saved in local storage.
+2) Log-in process - once the authentication process is completed meaning username and password match the database, the backend will create a token and send it back to the client which will be saved in local storage.
 
-3) Posting process - user can only post when they have a valid token which was pulled from user's local storage and send to the backend to verify (authorization process).
+3) Posting process - the user can only post when they have a valid token which was pulled from the user's local storage and send to the backend to verify (authorization process).
 
-4) Real-time chat with multiple users - each user (socket) connects to the backend with socket.io. The backend received a new socket connection everytime each user log in and it will emit new events/messages to all connecting sockets.
+4) Real-time chat with multiple users - each user (socket) connects to the backend with socket.io. The backend received a new socket connection every time each user logs in and it will emit new events/messages to all connecting sockets.
 
-Key Takeaways: It's interesting to see the segregation of duties of each part of the applications. I also get to play around debugging tools on VScode which is pretty interesting. Finally, I get to build and understand the whole full-stack process which is awesome!. :)
-I've learned so much from this project. so much effort and time into this. the end result feels great. This app help me build confidence that i'm going to be a good full-stack developer.
+Key Takeaways: I've learned so much from this project technically and mentally. I learn so many aspects of server-side programming and also how to be persistent and keep going even though things are rough at times. And, the final result makes me feel great!
 
 ## Built With
 
@@ -42,11 +41,11 @@ First install the project's dependencies and scripts in the root directory run t
 
 ``` npm i```
 
-then cd into client and run the same command :
+then cd into client and run the same command:
 
 ``` npm i```
 
-Then to run the app on your system use the command:
+To start the app locally, run this command in the root directory:
 
 ``` npm run start```
 
