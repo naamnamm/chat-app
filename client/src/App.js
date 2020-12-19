@@ -10,7 +10,7 @@ import {
   Redirect,
 } from 'react-router-dom';
 
-const socket = io('http://localhost:5000/');
+const socket = io();
 
 const App = () => {
   const [user, setUser] = useState([]);
@@ -19,7 +19,7 @@ const App = () => {
   const setAuth = (boolean) => {
     setIsAuthenticated(boolean);
   };
- 
+
   const verifyToken = async () => {
     try {
       const response = await fetch('users/verify-token', {
@@ -32,19 +32,18 @@ const App = () => {
       });
 
       const data = await response.json();
-      console.log(data)
-      console.log(data.isVerified)
+      console.log(data);
+      console.log(data.isVerified);
       //debugger;
       if (data.isVerified === true) {
-        setIsAuthenticated(true)
-        
-        setUser(data)
+        setIsAuthenticated(true);
 
-        console.log(user)
+        setUser(data);
+
+        console.log(user);
       } else {
         setIsAuthenticated(false);
       }
-        
     } catch (err) {
       console.error(err.message);
     }
@@ -80,11 +79,7 @@ const App = () => {
               path='/chatroom'
               render={(props) =>
                 isAuthenticated ? (
-                  <ChatRoom
-                    {...props}
-                    user={user}
-                    setAuth={setAuth}
-                  />
+                  <ChatRoom {...props} user={user} setAuth={setAuth} />
                 ) : (
                   <Redirect to='/' />
                 )
