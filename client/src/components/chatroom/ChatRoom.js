@@ -6,7 +6,7 @@ import io from 'socket.io-client';
 import ScrollableFeed from 'react-scrollable-feed';
 import Messages from './Messages';
 
-const socket = io();
+const socket = io('https://naamp-chat-app.herokuapp.com/');
 //const socket = io('http://localhost:5000/');
 
 const Chatroom = ({ user, setAuth }) => {
