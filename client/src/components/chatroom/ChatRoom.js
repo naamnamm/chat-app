@@ -6,7 +6,8 @@ import io from 'socket.io-client';
 import ScrollableFeed from 'react-scrollable-feed';
 import Messages from './Messages';
 
-const socket = io('http://localhost:5000/');
+const socket = io();
+//const socket = io('http://localhost:5000/');
 
 const Chatroom = ({ user, setAuth }) => {
   const [messages, setMessages] = useState([]);
