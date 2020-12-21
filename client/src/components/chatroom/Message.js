@@ -3,15 +3,16 @@ import './Message.css';
 
 const Message = ({ date, messages, currentUser }) => {
   const displayMsg = messages.map((msg) => {
+    //console.log(msg);
     return msg.username == currentUser ? (
-      <div className='messageContainer ml-auto mb-0'>
+      <div className='messageContainer ml-auto mb-0' key={msg.id}>
         <div className='messageBox backgroundBlue'>
           <p className='messageText colorWhite'>{msg.text}</p>
         </div>
         <p className='sentText pl-10'>{msg.username}</p>
       </div>
     ) : (
-      <div className='messageContainer'>
+      <div className='messageContainer' key={msg.id}>
         <p className='sentText pr-10'>{msg.username}</p>
         <div className='messageBox backgroundLight mr-auto mb-0'>
           <p className='messageText colorDark'>{msg.text}</p>

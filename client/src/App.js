@@ -32,15 +32,10 @@ const App = () => {
       });
 
       const data = await response.json();
-      console.log(data);
-      console.log(data.isVerified);
-      //debugger;
+
       if (data.isVerified === true) {
         setIsAuthenticated(true);
-
         setUser(data);
-
-        console.log(user);
       } else {
         setIsAuthenticated(false);
       }

@@ -7,7 +7,6 @@ import ScrollableFeed from 'react-scrollable-feed';
 import Messages from './Messages';
 
 const socket = io();
-//const socket = io('http://localhost:5000/');
 
 const Chatroom = ({ user, setAuth }) => {
   const [messages, setMessages] = useState([]);
@@ -126,6 +125,7 @@ const Chatroom = ({ user, setAuth }) => {
   const displayButtons = channels.map((c, index) => {
     return c === channel ? (
       <Button
+        key={index + 1000}
         onClick={() => setChannel(c)}
         className='mr-1 mb-1'
         variant='outline-primary'
@@ -134,6 +134,7 @@ const Chatroom = ({ user, setAuth }) => {
       </Button>
     ) : (
       <Button
+        key={index + 2000}
         onClick={() => setChannel(c)}
         className='mr-1 mb-1'
         variant='primary'

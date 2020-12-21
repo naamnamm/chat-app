@@ -2,7 +2,7 @@
 
 App built with React (frontend) and Express (backend) that pulls data to and from the database [Postgres](http://postgresql.org/).
 
-View Application on [Heroku](https://naamp-twitter-app.herokuapp.com/)
+View Application on [Heroku](https://naamp-chat-app.herokuapp.com/)
 
 <img src="https://user-images.githubusercontent.com/53867191/101245189-fec39b00-36d8-11eb-9b84-29f82adfe4fc.png" />
 
