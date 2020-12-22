@@ -4,10 +4,7 @@ import './LoginSignup.css';
 import { FaComments } from 'react-icons/fa';
 import SignUp from './SignUp';
 
-const LoginSignup = ({
-  onUserSubmit,
-  setAuth,
-}) => {
+const LoginSignup = ({ onUserSubmit, setAuth }) => {
   const usernameRef = useRef();
   const passwordRef = useRef();
   const [modalOpen, setModalOpen] = useState(false);
@@ -35,9 +32,6 @@ const LoginSignup = ({
       const response = await fetch('/users/login', config);
       const loginData = await response.json();
 
-      //console.log(loginData);
-
-      //debugger;
       if (!response.ok) {
         setErrorMsg(loginData.error.message);
       } else {

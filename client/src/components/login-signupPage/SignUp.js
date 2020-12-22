@@ -24,9 +24,7 @@ const SignUp = ({ closeModal }) => {
       };
 
       const response = await fetch('/users/signup', config);
-      console.log(response);
       const signupData = await response.json();
-      console.log(signupData);
 
       !response.ok ? setErrorMsg(signupData) : closeModal();
     } catch (error) {
@@ -39,8 +37,11 @@ const SignUp = ({ closeModal }) => {
       <Modal.Header closeButton>Create Account</Modal.Header>
       <Modal.Body>
         <Form onSubmit={handleSubmit}>
-          {errorMsg ? errorMsg.map((err => <div className='text-danger'>{err.message}</div>)) : null}
-          {/* {https://react-bootstrap.github.io/components/alerts/} */}
+          {errorMsg
+            ? errorMsg.map((err) => (
+                <div className='text-danger'>{err.message}</div>
+              ))
+            : null}
           <Form.Group>
             <Form.Label>Username</Form.Label>
             <Form.Control type='text' ref={usernameRef} required />

@@ -6,11 +6,11 @@ View Application on [Heroku](https://naamp-chat-app.herokuapp.com/)
 
 <img src="https://user-images.githubusercontent.com/53867191/101245189-fec39b00-36d8-11eb-9b84-29f82adfe4fc.png" />
 
-<img src="https://user-images.githubusercontent.com/53867191/101245199-10a53e00-36d9-11eb-946e-c9ffff6e576f.png" />
+<img src="https://user-images.githubusercontent.com/53867191/102899031-5c294d00-4438-11eb-8010-4c41ccc64127.png" />
 
 ## Summary
 
-This is my second full-stack application.
+This is my second full-stack application. I've learned so much from this project technically and mentally. I learn so many aspects of server-side programming and also how to be persistent and keep going even though things are rough at times. And, the final result makes me feel great!
 
 ### Main Functionality
 
@@ -22,7 +22,13 @@ This is my second full-stack application.
 
 4) Real-time chat with multiple users - each user (socket) connects to the backend with socket.io. The backend received a new socket connection every time each user logs in and it will emit new events/messages to all connecting sockets.
 
-Key Takeaways: I've learned so much from this project technically and mentally. I learn so many aspects of server-side programming and also how to be persistent and keep going even though things are rough at times. And, the final result makes me feel great!
+
+## Installation
+
+1. Run `npm install` in root folder
+2. Run `npm install --prefix client` in root folder
+3. Run `npm run dev` to start server
+4. Open browser at `http://localhost:5000`
 
 ## Built With
 
@@ -34,20 +40,6 @@ Key Takeaways: I've learned so much from this project technically and mentally. 
 ## Deployment
 
 - [Heroku](https://www.heroku.com)
-
-## Local Installation Directions
-
-First install the project's dependencies and scripts in the root directory run the command:
-
-``` npm i```
-
-then cd into client and run the same command:
-
-``` npm i```
-
-To start the app locally, run this command in the root directory:
-
-``` npm run start```
 
 ## Author
 

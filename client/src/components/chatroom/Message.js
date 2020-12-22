@@ -3,7 +3,6 @@ import './Message.css';
 
 const Message = ({ date, messages, currentUser }) => {
   const displayMsg = messages.map((msg) => {
-    //console.log(msg);
     return msg.username == currentUser ? (
       <div className='messageContainer ml-auto mb-0' key={msg.id}>
         <div className='messageBox backgroundBlue'>

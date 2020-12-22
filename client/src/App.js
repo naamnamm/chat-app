@@ -88,35 +88,3 @@ const App = () => {
 };
 
 export default App;
-
-// const displayPage =
-// isLoggedIn === true ? (
-//   <ChatRoom
-//     username={username}
-//     user={user}
-//     handleLoggedIn={setIsLoggedIn}
-//     accessToken={accessToken}
-//   />
-// ) : (
-//   <LoginSignup
-//     onUserSubmit={setUser}
-//     onUsernameSubmit={setUsername}
-//     handleLoggedin={setIsLoggedIn}
-//     getAccessToken={setAccessToken}
-//   />
-// );
-
-// if (data.isVerified === true) {
-//   setIsAuthenticated(true)
-//   //console.log(isAuthenticated)
-//   //delete data.isVerified
-//   //console.log(data)
-
-//   setUser(data)
-//   // await fetch('/users/login/activeusers')
-//   // .then((res) => res.json())
-//   // .then(data => console.log(data))
-//   console.log(user)
-// } else {
-//   setIsAuthenticated(false);
-// }
