@@ -37,6 +37,5 @@
   },
   "engines": {
     "node": "12.18.1"
-  },
-  "stack": "heroku-22"
+  }
 }
