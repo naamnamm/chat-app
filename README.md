@@ -27,8 +27,10 @@ This is my second full-stack application. I've learned so much from this project
 
 1. Run `npm install` in root folder
 2. Run `npm install --prefix client` in root folder
-3. Run `npm run dev` to start server
-4. Open browser at `http://localhost:5000`
+3. Create `.env` file in the root directory and set the following environment variable.
+   - `ACCESS_TOKEN_SECRET` - this can be created using this [site](https://www.javainuse.com/jwtgenerator).
+4. Run `npm run dev` to start server
+5. Open browser at `http://localhost:5000`
 
 ## Built With
 
